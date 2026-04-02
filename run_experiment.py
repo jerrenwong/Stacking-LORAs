@@ -19,44 +19,15 @@ from transformers import (
 from data import load_datasets
 from eval import EvalCallback, evaluate_model
 
-SAMPLE_PROMPTS = [
-    "What is the capital of France?",
-    "Explain what gravity is in one sentence.",
-    "What are the three primary colors?",
-    "Name a famous scientist and their discovery.",
-    "What is the boiling point of water?",
-]
 
-
-def generate_samples(model, tokenizer, label=""):
-    """Generate responses to 5 fixed prompts and print them for sanity checking."""
-    print(f"\n  Sample generations ({label}):")
-    model.eval()
-    original_padding_side = tokenizer.padding_side
-    tokenizer.padding_side = "left"
-
-    for prompt_text in SAMPLE_PROMPTS:
-        messages = [{"role": "user", "content": prompt_text}]
-        formatted = tokenizer.apply_chat_template(
-            messages, tokenize=False, add_generation_prompt=True
-        )
-        inputs = tokenizer(
-            formatted, return_tensors="pt", add_special_tokens=False
-        ).to(model.device)
-        with torch.no_grad():
-            output = model.generate(
-                **inputs, max_new_tokens=64, do_sample=False,
-                pad_token_id=tokenizer.pad_token_id,
-            )
-        response = tokenizer.decode(
-            output[0][inputs["input_ids"].shape[1]:], skip_special_tokens=True
-        )
-        print(f"    Q: {prompt_text}")
-        print(f"    A: {response[:150]}")
+def print_eval(metrics, label=""):
+    """Print eval summary and 5 sample responses."""
+    print(f"\n  {label}")
+    print(f"  EN: {metrics['en_ratio']:.1%}  ZH: {metrics['zh_ratio']:.1%}  Other: {metrics['other_ratio']:.1%}")
+    print(f"\n  Sample responses:")
+    for r in metrics["responses"][:5]:
+        print(f"    [{r['lang']}] {r['response'][:120]}")
         print()
-
-    tokenizer.padding_side = original_padding_side
-    model.train()
 
 
 def get_lora_config(rank):
@@ -127,20 +98,19 @@ def run_single_experiment(args, rank):
 
     # Load datasets
     print("\nLoading datasets...")
-    chinese_train, english_train, chinese_eval, english_eval = load_datasets(
+    chinese_train, english_train, eval_prompts = load_datasets(
         tokenizer, args.n_train, args.n_eval, args.max_length, args.seed
     )
     print(f"  Chinese train: {len(chinese_train)}, English train: {len(english_train)}")
-    print(f"  Chinese eval: {len(chinese_eval)}, English eval: {len(english_eval)}")
+    print(f"  Eval prompts: {len(eval_prompts)}")
 
     data_collator = DataCollatorForSeq2Seq(tokenizer, padding=True, max_length=args.max_length)
 
     # Step 1: Base model sanity check
     print("\n--- Base model evaluation ---")
     model = load_base_model(args.model)
-    base_eval = evaluate_model(model, tokenizer, chinese_eval, english_eval)
-    print(f"  EN loss: {base_eval['en_loss']:.3f}  ZH loss: {base_eval['zh_loss']:.3f}  EN pref: {base_eval['en_preference']:.1%}")
-    generate_samples(model, tokenizer, "Base model — expect English")
+    base_eval = evaluate_model(model, tokenizer, eval_prompts)
+    print_eval(base_eval, "Base model — expect English")
     free_memory(model)
 
     # Step 2: Phase 1 — Train LoRA on Chinese data
@@ -150,7 +120,7 @@ def run_single_experiment(args, rank):
     model.print_trainable_parameters()
 
     phase1_callback = EvalCallback(
-        model, tokenizer, chinese_eval, english_eval, args.eval_every_steps
+        model, tokenizer, eval_prompts, args.eval_every_steps
     )
     trainer = Trainer(
         model=model,
@@ -162,15 +132,19 @@ def run_single_experiment(args, rank):
     trainer.train()
 
     # Post-Phase 1 eval
-    phase1_final = evaluate_model(model, tokenizer, chinese_eval, english_eval)
-    print(f"\n  Phase 1 final — EN loss: {phase1_final['en_loss']:.3f}  ZH loss: {phase1_final['zh_loss']:.3f}  EN pref: {phase1_final['en_preference']:.1%}")
-    if phase1_final["en_preference"] > 0.5:
-        print("  WARNING: Model still prefers English after Phase 1. Consider more training.")
-    generate_samples(model, tokenizer, "Post-Phase 1 — expect Chinese")
+    phase1_final_eval = evaluate_model(model, tokenizer, eval_prompts)
+    print_eval(phase1_final_eval, "Phase 1 final — expect Chinese")
+    if phase1_final_eval["zh_ratio"] < 0.5:
+        print("  WARNING: Phase 1 Chinese ratio is low. Consider more training.")
 
     model.save_pretrained(phase1_adapter_path)
     phase1_history = phase1_callback.history
-    phase1_history.append({"global_step": "final", **phase1_final})
+    phase1_history.append({
+        "global_step": "final",
+        "en_ratio": phase1_final_eval["en_ratio"],
+        "zh_ratio": phase1_final_eval["zh_ratio"],
+        "other_ratio": phase1_final_eval["other_ratio"],
+    })
     free_memory(model, trainer)
 
     # Step 3: Phase 2, Condition (ii) — Continue same LoRA on English
@@ -180,7 +154,7 @@ def run_single_experiment(args, rank):
     model.print_trainable_parameters()
 
     cond_ii_callback = EvalCallback(
-        model, tokenizer, chinese_eval, english_eval, args.eval_every_steps
+        model, tokenizer, eval_prompts, args.eval_every_steps
     )
     trainer = Trainer(
         model=model,
@@ -191,11 +165,15 @@ def run_single_experiment(args, rank):
     )
     trainer.train()
 
-    cond_ii_final = evaluate_model(model, tokenizer, chinese_eval, english_eval)
-    print(f"\n  Condition (ii) final — EN loss: {cond_ii_final['en_loss']:.3f}  ZH loss: {cond_ii_final['zh_loss']:.3f}  EN pref: {cond_ii_final['en_preference']:.1%}")
-    generate_samples(model, tokenizer, "Condition (ii) final — expect English")
+    cond_ii_final = evaluate_model(model, tokenizer, eval_prompts)
+    print_eval(cond_ii_final, "Condition (ii) final — expect English")
     condition_ii_history = cond_ii_callback.history
-    condition_ii_history.append({"global_step": "final", **cond_ii_final})
+    condition_ii_history.append({
+        "global_step": "final",
+        "en_ratio": cond_ii_final["en_ratio"],
+        "zh_ratio": cond_ii_final["zh_ratio"],
+        "other_ratio": cond_ii_final["other_ratio"],
+    })
     free_memory(model, trainer)
 
     # Step 4: Phase 2, Condition (i) — Merge, then fresh LoRA on English
@@ -207,7 +185,7 @@ def run_single_experiment(args, rank):
     model.print_trainable_parameters()
 
     cond_i_callback = EvalCallback(
-        model, tokenizer, chinese_eval, english_eval, args.eval_every_steps
+        model, tokenizer, eval_prompts, args.eval_every_steps
     )
     trainer = Trainer(
         model=model,
@@ -218,18 +196,22 @@ def run_single_experiment(args, rank):
     )
     trainer.train()
 
-    cond_i_final = evaluate_model(model, tokenizer, chinese_eval, english_eval)
-    print(f"\n  Condition (i) final — EN loss: {cond_i_final['en_loss']:.3f}  ZH loss: {cond_i_final['zh_loss']:.3f}  EN pref: {cond_i_final['en_preference']:.1%}")
-    generate_samples(model, tokenizer, "Condition (i) final — expect English")
+    cond_i_final = evaluate_model(model, tokenizer, eval_prompts)
+    print_eval(cond_i_final, "Condition (i) final — expect English")
     condition_i_history = cond_i_callback.history
-    condition_i_history.append({"global_step": "final", **cond_i_final})
+    condition_i_history.append({
+        "global_step": "final",
+        "en_ratio": cond_i_final["en_ratio"],
+        "zh_ratio": cond_i_final["zh_ratio"],
+        "other_ratio": cond_i_final["other_ratio"],
+    })
     free_memory(model, trainer)
 
     # Save results
     results = {
         "rank": rank,
         "args": {k: v for k, v in vars(args).items()},
-        "base_eval": base_eval,
+        "base_eval": {k: v for k, v in base_eval.items() if k != "responses"},
         "phase1_history": phase1_history,
         "condition_i_history": condition_i_history,
         "condition_ii_history": condition_ii_history,

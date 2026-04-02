@@ -14,47 +14,45 @@ def _filter_numeric_steps(history):
 
 
 def plot_convergence(results, output_path):
-    """Plot Phase 2 convergence: steps vs EN loss and ZH loss for both conditions."""
-    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+    """Plot Phase 1 and Phase 2 side by side: steps vs English ratio."""
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
 
+    phase1 = _filter_numeric_steps(results["phase1_history"])
     cond_i = _filter_numeric_steps(results["condition_i_history"])
     cond_ii = _filter_numeric_steps(results["condition_ii_history"])
 
-    # Left plot: English loss (lower = better at English)
-    ax = axes[0]
-    if cond_i:
-        ax.plot([e["global_step"] for e in cond_i], [e["en_loss"] for e in cond_i],
-                "b-o", label="Merge + New LoRA (i)", markersize=4)
-    if cond_ii:
-        ax.plot([e["global_step"] for e in cond_ii], [e["en_loss"] for e in cond_ii],
-                "r-s", label="Continue LoRA (ii)", markersize=4)
+    # Left: Phase 1 — English % should drop as model learns Chinese
+    if phase1:
+        ax1.plot([e["global_step"] for e in phase1], [e["en_ratio"] for e in phase1],
+                 "m-o", label="Phase 1 (training Chinese)", markersize=4)
     if "base_eval" in results:
-        ax.axhline(y=results["base_eval"]["en_loss"], color="green",
-                   linestyle="--", alpha=0.7, label="Base model")
-    ax.set_xlabel("Training Steps")
-    ax.set_ylabel("English Eval Loss")
-    ax.set_title(f"English Loss (rank={results['rank']})")
-    ax.legend()
-    ax.grid(True, alpha=0.3)
+        ax1.axhline(y=results["base_eval"]["en_ratio"], color="green",
+                    linestyle="--", alpha=0.7,
+                    label=f"Base model ({results['base_eval']['en_ratio']:.0%} EN)")
+    ax1.set_xlabel("Training Steps")
+    ax1.set_ylabel("English Ratio")
+    ax1.set_title(f"Phase 1: Learning Chinese (rank={results['rank']})")
+    ax1.legend()
+    ax1.set_ylim(-0.05, 1.05)
+    ax1.grid(True, alpha=0.3)
 
-    # Right plot: EN preference (higher = more English)
-    ax = axes[1]
+    # Right: Phase 2 — English % should rise as model reverts to English
     if cond_i:
-        ax.plot([e["global_step"] for e in cond_i], [e["en_preference"] for e in cond_i],
-                "b-o", label="Merge + New LoRA (i)", markersize=4)
+        ax2.plot([e["global_step"] for e in cond_i], [e["en_ratio"] for e in cond_i],
+                 "b-o", label="Merge + New LoRA (i)", markersize=4)
     if cond_ii:
-        ax.plot([e["global_step"] for e in cond_ii], [e["en_preference"] for e in cond_ii],
-                "r-s", label="Continue LoRA (ii)", markersize=4)
+        ax2.plot([e["global_step"] for e in cond_ii], [e["en_ratio"] for e in cond_ii],
+                 "r-s", label="Continue LoRA (ii)", markersize=4)
     if "base_eval" in results:
-        ax.axhline(y=results["base_eval"]["en_preference"], color="green",
-                   linestyle="--", alpha=0.7, label="Base model")
-    ax.axhline(y=0.5, color="gray", linestyle=":", alpha=0.5)
-    ax.set_xlabel("Training Steps")
-    ax.set_ylabel("EN Preference (zh_loss / total)")
-    ax.set_title(f"English Preference (rank={results['rank']})")
-    ax.legend()
-    ax.set_ylim(-0.05, 1.05)
-    ax.grid(True, alpha=0.3)
+        ax2.axhline(y=results["base_eval"]["en_ratio"], color="green",
+                    linestyle="--", alpha=0.7,
+                    label=f"Base model ({results['base_eval']['en_ratio']:.0%} EN)")
+    ax2.set_xlabel("Training Steps")
+    ax2.set_ylabel("English Ratio")
+    ax2.set_title(f"Phase 2: Reverting to English (rank={results['rank']})")
+    ax2.legend()
+    ax2.set_ylim(-0.05, 1.05)
+    ax2.grid(True, alpha=0.3)
 
     plt.tight_layout()
     plt.savefig(output_path, dpi=150)
@@ -62,33 +60,46 @@ def plot_convergence(results, output_path):
     print(f"Saved convergence plot to {output_path}")
 
 
-def plot_rank_sweep(sweep_results, output_path):
-    """Plot rank sweep: final EN preference for both conditions across ranks."""
+def _steps_to_threshold(history, threshold=0.9):
+    """Find the first step where en_ratio >= threshold."""
+    for entry in history:
+        if isinstance(entry["global_step"], (int, float)) and entry["en_ratio"] >= threshold:
+            return entry["global_step"]
+    return None
+
+
+def plot_rank_sweep(sweep_results, output_path, threshold=0.9):
+    """Plot rank sweep: rank vs steps-to-threshold for both conditions."""
     ranks = [r["rank"] for r in sweep_results]
-
-    def get_final_pref(history):
-        if history:
-            return history[-1]["en_preference"]
-        return 0.5
-
-    pref_i = [get_final_pref(r["condition_i_history"]) for r in sweep_results]
-    pref_ii = [get_final_pref(r["condition_ii_history"]) for r in sweep_results]
+    steps_i = [_steps_to_threshold(r["condition_i_history"], threshold) for r in sweep_results]
+    steps_ii = [_steps_to_threshold(r["condition_ii_history"], threshold) for r in sweep_results]
 
     fig, ax = plt.subplots(figsize=(8, 5))
     x = np.arange(len(ranks))
     width = 0.35
 
-    ax.bar(x - width / 2, pref_i, width, label="Merge + New LoRA (i)", color="steelblue")
-    ax.bar(x + width / 2, pref_ii, width, label="Continue LoRA (ii)", color="indianred")
+    max_step = max(
+        max((s for s in steps_i if s is not None), default=0),
+        max((s for s in steps_ii if s is not None), default=0),
+    )
+    if max_step == 0:
+        max_step = 100
 
-    if sweep_results and "base_eval" in sweep_results[0]:
-        ax.axhline(y=sweep_results[0]["base_eval"]["en_preference"], color="green",
-                   linestyle="--", alpha=0.7, label="Base model")
+    bars_i = [s if s is not None else max_step * 1.2 for s in steps_i]
+    bars_ii = [s if s is not None else max_step * 1.2 for s in steps_ii]
 
-    ax.axhline(y=0.5, color="gray", linestyle=":", alpha=0.5)
+    ax.bar(x - width / 2, bars_i, width, label="Merge + New LoRA (i)", color="steelblue")
+    ax.bar(x + width / 2, bars_ii, width, label="Continue LoRA (ii)", color="indianred")
+
+    for idx, (si, sii) in enumerate(zip(steps_i, steps_ii)):
+        if si is None:
+            ax.text(idx - width / 2, bars_i[idx], "N/A", ha="center", va="bottom", fontsize=8)
+        if sii is None:
+            ax.text(idx + width / 2, bars_ii[idx], "N/A", ha="center", va="bottom", fontsize=8)
+
     ax.set_xlabel("LoRA Rank")
-    ax.set_ylabel("Final EN Preference")
-    ax.set_title("Rank Sweep: Final English Preference")
+    ax.set_ylabel(f"Steps to {threshold:.0%} English")
+    ax.set_title("Rank Sweep: Convergence Speed")
     ax.set_xticks(x)
     ax.set_xticklabels(ranks)
     ax.legend()

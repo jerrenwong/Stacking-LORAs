@@ -1,3 +1,30 @@
+# Cross-Instance Communication
+
+Two Claude instances work on this project — one local (development/code changes) and one on RunPod (running experiments). Use this section to coordinate.
+
+## Status
+- **Local**: Code is implemented and ready. Latest changes: switched to generation-based eval with langdetect (not loss-based), plot now shows Phase 1 and Phase 2 side by side.
+- **RunPod**: First run complete with rank=8, 500 train / 100 eval, 3 epochs. Results in `results/rank_8/results.json`.
+
+## Current Implementation Decisions
+- **Eval method**: Generation + langdetect (not loss-based). Loss-based eval was misleading — EN eval loss increased during Phase 2 even though generations were correct English.
+- **Data source**: `silk-road/alpaca-data-gpt4-chinese` (has both EN and ZH columns at same indices).
+- **Eval prompts**: From held-out eval split (not hardcoded).
+- **Quick iteration defaults**: n_train=500, n_eval=100, 3 epochs, rank=8, eval every 50 steps.
+
+## Notes from First Run
+- Phase 1 warning fired ("Model still prefers English") based on old loss metric — needs re-evaluation with generation-based eval.
+- Sample generations confirmed Phase 1 works (model responds in Chinese).
+- Both Phase 2 conditions successfully reverted to English.
+- Generation-based eval is slower but gives interpretable results.
+
+## TODO / Next Steps
+- Re-run with generation-based eval to get proper en_ratio/zh_ratio convergence curves.
+- Consider increasing n_train or epochs if Phase 1 Chinese ratio isn't high enough.
+- Rank sweep after single-rank results look good.
+
+---
+
 LoRA Reversal Experiment
 Research Question
 When you train a LoRA adapter to learn behavior X, and then want to undo X, is it easier to continue training the same LoRA adapter (condition ii) versus merging and training a new LoRA adapter (condition i)?
