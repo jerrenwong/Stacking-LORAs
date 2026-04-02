@@ -57,11 +57,13 @@ def _build_dataset(split, tokenizer, max_length, response_key):
 
 
 def load_datasets(tokenizer, n_train=500, n_eval=100, max_length=512, seed=42):
-    """Load and prepare Chinese/English training and eval data.
+    """Load and prepare Chinese/English training data and eval prompts.
 
     Returns:
-        (chinese_train, english_train, chinese_eval, english_eval)
-        All are HuggingFace Datasets with input_ids, attention_mask, labels.
+        (chinese_train, english_train, eval_prompts)
+        - chinese_train: HuggingFace Dataset with input_ids, attention_mask, labels
+        - english_train: HuggingFace Dataset with input_ids, attention_mask, labels
+        - eval_prompts: list of formatted prompt strings from the held-out eval split
     """
     ds = load_dataset("silk-road/alpaca-data-gpt4-chinese", split="train")
     ds = ds.shuffle(seed=seed).select(range(n_train + n_eval))
@@ -71,7 +73,17 @@ def load_datasets(tokenizer, n_train=500, n_eval=100, max_length=512, seed=42):
 
     chinese_train = _build_dataset(train_split, tokenizer, max_length, "output_zh")
     english_train = _build_dataset(train_split, tokenizer, max_length, "output")
-    chinese_eval = _build_dataset(eval_split, tokenizer, max_length, "output_zh")
-    english_eval = _build_dataset(eval_split, tokenizer, max_length, "output")
 
-    return chinese_train, english_train, chinese_eval, english_eval
+    # Build eval prompts as formatted strings for generation
+    eval_prompts = []
+    for row in eval_split:
+        user_content = row["instruction"]
+        if row["input"]:
+            user_content += "\n" + row["input"]
+        messages = [{"role": "user", "content": user_content}]
+        prompt_str = tokenizer.apply_chat_template(
+            messages, tokenize=False, add_generation_prompt=True
+        )
+        eval_prompts.append(prompt_str)
+
+    return chinese_train, english_train, eval_prompts

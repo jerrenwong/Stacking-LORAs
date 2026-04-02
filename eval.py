@@ -1,81 +1,114 @@
-"""Loss-based evaluation and TrainerCallback for the LoRA reversal experiment."""
+"""Generation-based language detection evaluation for the LoRA reversal experiment."""
 
+import langdetect
+from langdetect import DetectorFactory
 import torch
-from torch.utils.data import DataLoader
-from transformers import TrainerCallback, DataCollatorForSeq2Seq
+from transformers import TrainerCallback
+
+# Make langdetect deterministic
+DetectorFactory.seed = 0
 
 
-def compute_eval_loss(model, tokenizer, eval_dataset, batch_size=4, max_length=512):
-    """Compute average cross-entropy loss on an eval dataset (forward pass only).
+def detect_language(text):
+    """Detect language of text. Returns 'en', 'zh', or 'other'."""
+    text = text.strip()
+    if not text:
+        return "other"
+    try:
+        lang = langdetect.detect(text)
+        if lang.startswith("zh"):
+            return "zh"
+        if lang == "en":
+            return "en"
+        return "other"
+    except langdetect.LangDetectException:
+        return "other"
 
-    Returns average loss (float).
+
+def evaluate_model(model, tokenizer, eval_prompts, max_new_tokens=128, batch_size=4):
+    """Generate responses for eval prompts and classify languages.
+
+    Returns dict with en_ratio, zh_ratio, other_ratio, and individual responses.
     """
     model.eval()
-    collator = DataCollatorForSeq2Seq(tokenizer, padding=True, max_length=max_length)
-    loader = DataLoader(eval_dataset, batch_size=batch_size, collate_fn=collator)
+    original_padding_side = tokenizer.padding_side
+    tokenizer.padding_side = "left"
 
-    total_loss = 0.0
-    total_batches = 0
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
 
+    results = []
     with torch.no_grad():
-        for batch in loader:
-            batch = {k: v.to(model.device) for k, v in batch.items()}
-            outputs = model(**batch)
-            total_loss += outputs.loss.item()
-            total_batches += 1
+        for i in range(0, len(eval_prompts), batch_size):
+            batch_prompts = eval_prompts[i : i + batch_size]
+            inputs = tokenizer(
+                batch_prompts,
+                return_tensors="pt",
+                padding=True,
+                truncation=True,
+                max_length=512,
+                add_special_tokens=False,
+            ).to(model.device)
 
+            outputs = model.generate(
+                **inputs,
+                max_new_tokens=max_new_tokens,
+                do_sample=False,
+                pad_token_id=tokenizer.pad_token_id,
+            )
+
+            for j, output in enumerate(outputs):
+                input_len = inputs["input_ids"][j].shape[0]
+                response_ids = output[input_len:]
+                response = tokenizer.decode(response_ids, skip_special_tokens=True)
+                lang = detect_language(response)
+                results.append({
+                    "prompt": batch_prompts[j][:100] + "...",
+                    "response": response[:200],
+                    "lang": lang,
+                })
+
+    tokenizer.padding_side = original_padding_side
     model.train()
-    return total_loss / total_batches if total_batches > 0 else float("inf")
 
-
-def evaluate_model(model, tokenizer, chinese_eval, english_eval, batch_size=4, max_length=512):
-    """Compute losses on both Chinese and English eval sets.
-
-    Returns dict with en_loss, zh_loss, and en_preference (higher = more English).
-    """
-    en_loss = compute_eval_loss(model, tokenizer, english_eval, batch_size, max_length)
-    zh_loss = compute_eval_loss(model, tokenizer, chinese_eval, batch_size, max_length)
-
-    # en_preference: when model is good at English, en_loss is low relative to zh_loss
-    total = en_loss + zh_loss
-    en_preference = zh_loss / total if total > 0 else 0.5
+    en_count = sum(1 for r in results if r["lang"] == "en")
+    zh_count = sum(1 for r in results if r["lang"] == "zh")
+    total = len(results) if results else 1
 
     return {
-        "en_loss": en_loss,
-        "zh_loss": zh_loss,
-        "en_preference": en_preference,
+        "en_ratio": en_count / total,
+        "zh_ratio": zh_count / total,
+        "other_ratio": (total - en_count - zh_count) / total,
+        "n_samples": len(results),
+        "responses": results,
     }
 
 
 class EvalCallback(TrainerCallback):
-    """Computes eval losses every N optimizer steps during training."""
+    """Runs generation-based evaluation every N optimizer steps during training."""
 
-    def __init__(self, model, tokenizer, chinese_eval, english_eval,
-                 eval_every_steps=50, batch_size=4, max_length=512):
+    def __init__(self, model, tokenizer, eval_prompts, eval_every_steps=50, max_new_tokens=128):
         self.model = model
         self.tokenizer = tokenizer
-        self.chinese_eval = chinese_eval
-        self.english_eval = english_eval
+        self.eval_prompts = eval_prompts
         self.eval_every_steps = eval_every_steps
-        self.batch_size = batch_size
-        self.max_length = max_length
+        self.max_new_tokens = max_new_tokens
         self.history = []
 
     def on_step_end(self, args, state, control, **kwargs):
         if state.global_step % self.eval_every_steps == 0 and state.global_step > 0:
             metrics = evaluate_model(
-                self.model, self.tokenizer,
-                self.chinese_eval, self.english_eval,
-                self.batch_size, self.max_length,
+                self.model, self.tokenizer, self.eval_prompts, self.max_new_tokens
             )
             entry = {
                 "global_step": state.global_step,
-                **metrics,
+                "en_ratio": metrics["en_ratio"],
+                "zh_ratio": metrics["zh_ratio"],
+                "other_ratio": metrics["other_ratio"],
             }
             self.history.append(entry)
             print(
                 f"  [Eval @ step {state.global_step}] "
-                f"EN loss: {metrics['en_loss']:.3f}  "
-                f"ZH loss: {metrics['zh_loss']:.3f}  "
-                f"EN pref: {metrics['en_preference']:.1%}"
+                f"EN: {metrics['en_ratio']:.1%}  ZH: {metrics['zh_ratio']:.1%}  "
+                f"Other: {metrics['other_ratio']:.1%}"
             )
