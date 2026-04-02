@@ -1,0 +1,108 @@
+{
+  "rank": 8,
+  "args": {
+    "model": "Qwen/Qwen2.5-1.5B-Instruct",
+    "rank": 8,
+    "n_train": 500,
+    "n_eval": 100,
+    "epochs_phase1": 3,
+    "epochs_phase2": 3,
+    "lr": 0.0002,
+    "batch_size": 4,
+    "grad_accum": 2,
+    "eval_every_steps": 50,
+    "max_length": 512,
+    "output_dir": "results",
+    "seed": 42,
+    "sweep": false,
+    "ranks": [
+      4,
+      8,
+      16,
+      32
+    ]
+  },
+  "base_eval": {
+    "en_loss": 1.1600519108772278,
+    "zh_loss": 2.077241759300232,
+    "en_preference": 0.6416599700040074
+  },
+  "phase1_history": [
+    {
+      "global_step": 50,
+      "en_loss": 1.4098213863372804,
+      "zh_loss": 1.7320961475372314,
+      "en_preference": 0.5512863176269512
+    },
+    {
+      "global_step": 100,
+      "en_loss": 1.3683565592765807,
+      "zh_loss": 1.7391972613334656,
+      "en_preference": 0.5596676233887535
+    },
+    {
+      "global_step": 150,
+      "en_loss": 1.4791179347038268,
+      "zh_loss": 1.7901957774162292,
+      "en_preference": 0.5475754042139134
+    },
+    {
+      "global_step": "final",
+      "en_loss": 1.5009614396095277,
+      "zh_loss": 1.7834677600860596,
+      "en_preference": 0.5430069128149749
+    }
+  ],
+  "condition_i_history": [
+    {
+      "global_step": 50,
+      "en_loss": 1.1244112181663513,
+      "zh_loss": 1.9644065761566163,
+      "en_preference": 0.6359736012163162
+    },
+    {
+      "global_step": 100,
+      "en_loss": 1.1344702434539795,
+      "zh_loss": 2.0361463689804076,
+      "en_preference": 0.6421925504947955
+    },
+    {
+      "global_step": 150,
+      "en_loss": 1.1746280026435851,
+      "zh_loss": 2.1552438163757324,
+      "en_preference": 0.647245279552675
+    },
+    {
+      "global_step": "final",
+      "en_loss": 1.174477882385254,
+      "zh_loss": 2.2273125219345093,
+      "en_preference": 0.6547471352456508
+    }
+  ],
+  "condition_ii_history": [
+    {
+      "global_step": 50,
+      "en_loss": 1.1228011536598206,
+      "zh_loss": 1.982983751296997,
+      "en_preference": 0.6384807100234676
+    },
+    {
+      "global_step": 100,
+      "en_loss": 1.1738512778282166,
+      "zh_loss": 2.153019208908081,
+      "en_preference": 0.647160512407028
+    },
+    {
+      "global_step": 150,
+      "en_loss": 1.2796817326545715,
+      "zh_loss": 2.3881934595108034,
+      "en_preference": 0.6511108842012981
+    },
+    {
+      "global_step": "final",
+      "en_loss": 1.27317218542099,
+      "zh_loss": 2.3947177743911743,
+      "en_preference": 0.6528870278632376
+    }
+  ]
+}
