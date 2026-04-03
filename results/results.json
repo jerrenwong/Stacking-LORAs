@@ -4,13 +4,30 @@
     "model": "Qwen/Qwen2.5-1.5B-Instruct",
     "rank": 8,
     "n_train": 500,
-    "n_eval": 100,
+    "n_eval": 10,
     "epochs_phase1": 3,
     "epochs_phase2": 3,
     "lr": 0.0002,
     "batch_size": 4,
     "grad_accum": 2,
+    "max_steps_phase1": 20,
+    "max_steps_phase2": 20,
     "eval_every_steps": 50,
+    "eval_at_steps_phase1": [
+      0,
+      5,
+      10,
+      20
+    ],
+    "eval_at_steps_phase2": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      10,
+      20
+    ],
     "max_length": 512,
     "output_dir": "results",
     "seed": 42,
@@ -23,86 +40,1286 @@
     ]
   },
   "base_eval": {
-    "en_loss": 1.1600519108772278,
-    "zh_loss": 2.077241759300232,
-    "en_preference": 0.6416599700040074
+    "en_ratio": 1.0,
+    "zh_ratio": 0.0,
+    "other_ratio": 0.0,
+    "n_samples": 6,
+    "n_skipped": 4,
+    "responses": [
+      {
+        "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+        "response": "1. **Reduce Carbon Emissions**: This approach involves reducing the amount of greenhouse gases emitted into the atmosphere through various means such as increasing energy efficiency, promoting renewab",
+        "lang": "en"
+      },
+      {
+        "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+        "response": "According to Chicago style, the citation would be:\n\nRoosevelt, T. (1901). The inauguration of Theodore Roosevelt as President of the United States on April 4, 1901.\n\nFor the bibliography entry, it wou",
+        "lang": "en"
+      },
+      {
+        "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+        "response": "They wish to implement the plan promptly.",
+        "lang": "en"
+      },
+      {
+        "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+        "response": "One disease caused by viruses is the common cold. Viruses can also cause other illnesses such as influenza (flu), measles, mumps, chickenpox, and HIV/AIDS.",
+        "lang": "en"
+      },
+      {
+        "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+        "response": "To calculate the average cost of a meal from the given data, you would add up all the costs and then divide by the number of items in the list.\n\nHere's how to do it:\n\n1. Add up all the costs:\n   $15 +",
+        "lang": "en"
+      },
+      {
+        "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+        "response": "Creating a secure random ten-digit password that includes both numbers and special characters is important for enhancing the security of your accounts. Here's an example of such a password:\n\n`3@2!9#8$",
+        "lang": "en"
+      },
+      {
+        "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+        "response": "Here are five different programming languages:\n\n1. Python - A high-level, interpreted language known for its readability and ease of use.\n2. Java - A popular general-purpose programming language that ",
+        "lang": "en"
+      },
+      {
+        "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+        "response": "\"SparkleBurst Cereal\"",
+        "lang": "other"
+      },
+      {
+        "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+        "response": "\"Strawberry Macadamia Chocolate Sundae\"",
+        "lang": "other"
+      },
+      {
+        "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+        "response": "\"Effort without pause.\"",
+        "lang": "en"
+      }
+    ]
   },
   "phase1_history": [
     {
-      "global_step": 50,
-      "en_loss": 1.4098213863372804,
-      "zh_loss": 1.7320961475372314,
-      "en_preference": 0.5512863176269512
+      "global_step": 0,
+      "en_ratio": 1.0,
+      "zh_ratio": 0.0,
+      "other_ratio": 0.0,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. **Reduce Carbon Emissions**: This approach involves reducing the amount of greenhouse gases emitted into the atmosphere through various means such as increasing energy efficiency, promoting renewab",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "According to Chicago style, the citation would be:\n\nRoosevelt, T. (1901). The inauguration of Theodore Roosevelt as President of the United States on April 4, 1901.\n\nFor the bibliography entry, it wou",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "They wish to implement the plan promptly.",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "One disease caused by viruses is the common cold. Viruses can also cause other illnesses such as influenza (flu), measles, mumps, chickenpox, and HIV/AIDS.",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "To calculate the average cost of a meal from the given data, you would add up all the costs and then divide by the number of items in the list.\n\nHere's how to do it:\n\n1. Add up all the costs:\n   $15 +",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Creating a secure random ten-digit password that includes both numbers and special characters is important for enhancing the security of your accounts. Here's an example of such a password:\n\n`3@2!9#8$",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Here are five different programming languages:\n\n1. Python - A high-level, interpreted language known for its readability and ease of use.\n2. Java - A popular general-purpose programming language that ",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"SparkleBurst Cereal\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Strawberry Macadamia Chocolate Sundae\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Effort without pause.\"",
+          "lang": "en"
+        }
+      ]
     },
     {
-      "global_step": 100,
-      "en_loss": 1.3683565592765807,
-      "zh_loss": 1.7391972613334656,
-      "en_preference": 0.5596676233887535
+      "global_step": 5,
+      "en_ratio": 0.75,
+      "zh_ratio": 0.0,
+      "other_ratio": 0.25,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Reduce carbon emissions: This approach involves reducing the amount of greenhouse gases that are released into the atmosphere through various means such as using renewable energy sources like solar",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "In April 4, 1901, Theodore Roosevelt was inaugurated as President of the United States.",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "They wish to utilize the plan promptly.",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "SARS-CoV-2\u5f15\u8d77\u7684\u75be\u75c5\u3002",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "To calculate the average cost of a meal given the costs of three meals ($15, $20, and $12), you would add up all the individual costs and then divide that sum by the number of meals.\n\nHere's how to do",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1234567890!@#$%^&*()_+{}|:;?><,./-=`~ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Python\n2. Java\n3. C++\n4. JavaScript\n5. Ruby",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u5f69\u8679\u7cd6\u5b9d\u76d2\" (Qingtian Rugao Baozong)",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Macadamia Nut Chocolate and Strawberry Tart\"",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Effortless labor.\"",
+          "lang": "en"
+        }
+      ]
     },
     {
-      "global_step": 150,
-      "en_loss": 1.4791179347038268,
-      "zh_loss": 1.7901957774162292,
-      "en_preference": 0.5475754042139134
+      "global_step": 10,
+      "en_ratio": 0.2,
+      "zh_ratio": 0.8,
+      "other_ratio": 0.0,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. \u901a\u8fc7\u51cf\u5c11\u6e29\u5ba4\u6c14\u4f53\u6392\u653e\u6765\u51cf\u7f13\u6c14\u5019\u53d8\u5316\u3002\u8fd9\u79cd\u65b9\u6cd5\u7684\u4f18\u70b9\u662f\u5b83\u53ef\u4ee5\u901a\u8fc7\u6539\u53d8\u4eba\u7c7b\u884c\u4e3a\u548c\u653f\u7b56\u6765\u5b9e\u73b0\uff0c\u800c\u4e14\u5b83\u53ef\u4ee5\u5bf9\u73af\u5883\u4ea7\u751f\u79ef\u6781\u7684\u5f71\u54cd\u3002\u7136\u800c\uff0c\u8fd9\u79cd\u65b9\u6cd5\u7684\u7f3a\u70b9\u662f\u5b83\u53ef\u80fd\u9700\u8981\u5927\u91cf\u7684\u65f6\u95f4\u548c\u8d44\u6e90\u6765\u5b9e\u65bd\uff0c\u5e76\u4e14\u53ef\u80fd\u4f1a\u5bfc\u81f4\u4e00\u4e9b\u793e\u4f1a\u548c\u7ecf\u6d4e\u95ee\u9898\u3002\n2. \u901a\u8fc7\u4f7f\u7528\u53ef\u518d\u751f\u80fd\u6e90\u6765\u66ff\u4ee3\u5316\u77f3\u71c3\u6599\u3002\u8fd9\u79cd\u65b9\u6cd5\u7684\u4f18\u70b9\u662f\u53ef\u4ee5\u51cf\u5c11\u6e29\u5ba4\u6c14\u4f53\u6392\u653e\u5e76\u964d\u4f4e\u5bf9\u5316\u77f3\u71c3\u6599\u7684\u9700\u6c42\u3002\u7136\u800c\uff0c\u8fd9\u79cd\u65b9\u6cd5\u7684\u7f3a\u70b9\u662f\u5b83\u9700\u8981\u5927\u91cf\u7684\u6295\u8d44\u548c\u6280\u672f\uff0c\u800c\u4e14\u5728\u67d0\u4e9b\u60c5\u51b5\u4e0b\u53ef\u80fd\u65e0\u6cd5\u63d0\u4f9b\u8db3\u591f\u7684\u80fd",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Chicago \u683c\u5f0f\uff1aRoosevelt, T. (1901). The inauguration of Theodore Roosevelt as President of the United States on April 4, 1901. New York: Charles Scribner\u2019s Sons. [Bibliography] Roosevelt, T. (1901). The ",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u4ed6\u4eec\u5e0c\u671b\u5c3d\u5feb\u4f7f\u7528\u8fd9\u4e2a\u8ba1\u5212\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u827e\u6ecb\u75c5\u3002\u827e\u6ecb\u75c5\u662f\u7531\u4eba\u7c7b\u514d\u75ab\u7f3a\u9677\u75c5\u6bd2\uff08HIV\uff09\u5f15\u8d77\u7684\uff0c\u662f\u4e00\u79cd\u4e25\u91cd\u5a01\u80c1\u4eba\u7c7b\u5065\u5eb7\u7684\u4f20\u67d3\u75c5\u3002\u827e\u6ecb\u75c5\u7684\u4f20\u64ad\u9014\u5f84\u4e3b\u8981\u662f\u901a\u8fc7\u8840\u6db2\u3001\u7cbe\u6db2\u3001\u9634\u9053\u5206\u6ccc\u7269\u548c\u6bcd\u4e73\u7b49\u4f53\u6db2\u4f20\u64ad\u3002\u827e\u6ecb\u75c5\u60a3\u8005\u901a\u5e38\u4f1a\u51fa\u73b0\u6301\u7eed\u6027\u53d1\u70ed\u3001\u4f53\u91cd\u51cf\u8f7b\u3001\u6dcb\u5df4\u7ed3\u80bf\u5927\u7b49\u75c7\u72b6\uff0c\u5e76\u4e14\u4f1a\u9010\u6e10\u4e27\u5931\u5bf9\u5404\u79cd\u75be\u75c5\u7684\u62b5\u6297\u529b\uff0c\u6700\u7ec8\u5bfc\u81f4\u6b7b\u4ea1\u3002\u9884\u9632\u827e\u6ecb\u75c5\u7684\u5173\u952e\u662f\u907f\u514d\u4e0e\u611f\u67d3\u8005\u7684\u76f4\u63a5\u63a5\u89e6\uff0c\u5982\u4e0d\u8fdb\u884c\u65e0\u4fdd\u62a4\u7684\u6027\u884c\u4e3a\u3001\u4e0d\u5171\u7528\u9488\u5934\u6216\u6ce8\u5c04\u5668\u3001\u4e0d\u4f7f\u7528\u672a\u7ecf\u6d88\u6bd2\u7684\u533b\u7597\u5668\u68b0\u7b49\u3002\u540c\u65f6\uff0c\u63a5\u79cd\u75ab\u82d7\u4e5f\u662f\u9884\u9632\u827e\u6ecb\u75c5",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u8981\u8ba1\u7b97\u5e73\u5747\u6210\u672c\uff0c\u6211\u4eec\u9700\u8981\u5c06\u6240\u6709\u9910\u70b9\u7684\u6210\u672c\u76f8\u52a0\uff0c\u7136\u540e\u9664\u4ee5\u9910\u70b9\u7684\u6570\u91cf\u3002\u5728\u8fd9\u79cd\u60c5\u51b5\u4e0b\uff0c\u6211\u4eec\u6709\u56db\u4e2a\u9910\u70b9\uff0c\u6240\u4ee5\u6211\u4eec\u5c06\u5b83\u4eec\u7684\u603b\u548c\u9664\u4ee54\u3002\n$15 + $20 + $12 + $18 = $65\n$65 / 4 = $16.25\n\u56e0\u6b64\uff0c\u5e73\u5747\u9910\u70b9\u6210\u672c\u4e3a\u6bcf\u4efd $16.25\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1234567890!@#$%^&*()_+{}|:;?><,./-=?[]~`",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1\u3001Java\uff1a\u4e00\u79cd\u9762\u5411\u5bf9\u8c61\u7684\u7f16\u7a0b\u8bed\u8a00\uff0c\u5e7f\u6cdb\u7528\u4e8e\u4f01\u4e1a\u7ea7\u5e94\u7528\u7a0b\u5e8f\u5f00\u53d1\u3002\n2\u3001Python\uff1a\u4e00\u79cd\u9ad8\u7ea7\u7f16\u7a0b\u8bed\u8a00\uff0c\u6613\u4e8e\u5b66\u4e60\u548c\u4f7f\u7528\uff0c\u5e76\u4e14\u9002\u7528\u4e8e\u5404\u79cd\u5e94\u7528\u9886\u57df\uff0c\u5305\u62ec\u6570\u636e\u5206\u6790\u3001\u4eba\u5de5\u667a\u80fd\u548c\u673a\u5668\u5b66\u4e60\u7b49\u3002\n3\u3001C++\uff1a\u4e00\u79cd\u9762\u5411\u5bf9\u8c61\u7684\u7f16\u7a0b\u8bed\u8a00\uff0c\u4e3b\u8981\u7528\u4e8e\u7cfb\u7edf\u8f6f\u4ef6\u548c\u6e38\u620f\u5f00\u53d1\u3002\n4\u3001JavaScript\uff1a\u4e00\u79cd\u811a\u672c\u8bed\u8a00\uff0c\u7528\u4e8e\u7f51\u9875\u5f00\u53d1\u3002\u5b83\u662f\u4e00\u79cd\u89e3\u91ca\u578b\u8bed\u8a00\uff0c\u53ef\u4ee5\u8fd0\u884c\u5728\u6d4f\u89c8\u5668\u6216\u670d\u52a1\u5668\u4e0a\u3002\n5\u3001Ruby\uff1a\u4e00\u79cd\u52a8\u6001\u7f16\u7a0b\u8bed\u8a00\uff0c\u4ee5\u7b80\u6d01\u6613\u8bfb\u800c\u95fb\u540d",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u5f69\u8679\u7cd6\u5b9d\u76d2\"\uff08\u82f1\u6587\uff1aRainbow Candy Box\uff09",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u5de7\u514b\u529b\u8349\u8393\u62b9\u8336\u51b0\u6dc7\u6dcb\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u52e4\u52c9\u4e0d\u61c8\"",
+          "lang": "other"
+        }
+      ]
+    },
+    {
+      "global_step": 20,
+      "en_ratio": 0.16666666666666666,
+      "zh_ratio": 0.6666666666666666,
+      "other_ratio": 0.16666666666666666,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. \u7eff\u8272\u80fd\u6e90\uff1a\u7eff\u8272\u80fd\u6e90\u662f\u89e3\u51b3\u6c14\u5019\u53d8\u5316\u95ee\u9898\u7684\u4e00\u79cd\u65b9\u6cd5\u3002\u5b83\u5305\u62ec\u592a\u9633\u80fd\u3001\u98ce\u80fd\u548c\u6c34\u529b\u53d1\u7535\u7b49\u53ef\u518d\u751f\u80fd\u6e90\uff0c\u8fd9\u4e9b\u80fd\u6e90\u4e0d\u4f1a\u4ea7\u751f\u6e29\u5ba4\u6c14\u4f53\u6392\u653e\u3002\u7136\u800c\uff0c\u7eff\u8272\u80fd\u6e90\u7684\u751f\u4ea7\u6210\u672c\u8f83\u9ad8\uff0c\u5e76\u4e14\u9700\u8981\u5927\u91cf\u7684\u571f\u5730\u6765\u79cd\u690d\u690d\u7269\u6216\u5efa\u9020\u5927\u578b\u8bbe\u65bd\u3002\n2. \u51cf\u5c11\u78b3\u8db3\u8ff9\uff1a\u51cf\u5c11\u78b3\u8db3\u8ff9\u662f\u6307\u901a\u8fc7\u6539\u53d8\u751f\u6d3b\u65b9\u5f0f\u6765\u51cf\u5c11\u4e2a\u4eba\u5bf9\u73af\u5883\u7684\u5f71\u54cd\u3002\u8fd9\u53ef\u4ee5\u901a\u8fc7\u4f7f\u7528\u516c\u5171\u4ea4\u901a\u5de5\u5177\u3001\u9a91\u81ea\u884c\u8f66\u6216\u6b65\u884c\u4ee3\u66ff\u5f00\u8f66\u3001\u8d2d\u4e70\u672c\u5730\u4ea7\u54c1\u800c\u4e0d\u662f\u8fdb\u53e3\u5546\u54c1\u4ee5\u53ca\u51cf\u5c11\u6d6a\u8d39\u7b49\u65b9\u5f0f\u5b9e\u73b0\u3002\u8fd9\u79cd\u65b9\u6cd5\u7684\u4f18\u70b9\u662f\u53ef\u4ee5\u7acb\u5373",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Teddy Roosevelt\u2019s First Inauguration on April 4, 1901.\"",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u4ed6\u4eec\u5e0c\u671b\u5c3d\u5feb\u4f7f\u7528\u8fd9\u4e2a\u8ba1\u5212\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u827e\u6ecb\u75c5\u662f\u7531\u4eba\u7c7b\u514d\u75ab\u7f3a\u9677\u75c5\u6bd2\uff08HIV\uff09\u5f15\u8d77\u7684\u3002\u827e\u6ecb\u75c5\u662f\u4e00\u79cd\u4e25\u91cd\u7684\u4f20\u67d3\u75c5\uff0c\u5b83\u4f1a\u524a\u5f31\u4eba\u4f53\u7684\u514d\u75ab\u7cfb\u7edf\uff0c\u4f7f\u4eba\u4eec\u66f4\u5bb9\u6613\u611f\u67d3\u5176\u4ed6\u75be\u75c5\u548c\u751f\u75c5\u3002\u827e\u6ecb\u75c5\u76ee\u524d\u6ca1\u6709\u6cbb\u6108\u65b9\u6cd5\uff0c\u4f46\u901a\u8fc7\u6297\u9006\u8f6c\u5f55\u75c5\u6bd2\u6cbb\u7597\u53ef\u4ee5\u63a7\u5236\u75c5\u60c5\u5e76\u5ef6\u957f\u751f\u547d\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u8981\u8ba1\u7b97\u5e73\u5747\u6210\u672c\uff0c\u6211\u4eec\u9700\u8981\u5c06\u6240\u6709\u9910\u8d39\u76f8\u52a0\uff0c\u7136\u540e\u9664\u4ee5\u9910\u8d39\u7684\u6570\u91cf\u3002\u5728\u8fd9\u79cd\u60c5\u51b5\u4e0b\uff0c\u6211\u4eec\u6709\u56db\u4e2a\u9910\u8d39\uff1a$15\u3001$20\u3001$12\u548c$18\u3002\u8ba9\u6211\u4eec\u5148\u5c06\u5b83\u4eec\u76f8\u52a0\uff1a$15 + $20 + $12 + $18 = $65\u3002\u73b0\u5728\uff0c\u6211\u4eec\u5c06\u603b\u91d1\u989d\u9664\u4ee5\u6570\u91cf\uff1a$65 / 4 = $16.25\u3002\u56e0\u6b64\uff0c\u5e73\u5747\u9910\u8d39\u662f$16.25\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1234567890!@#$%^&*()_+{}|:;?><,./-_=+~`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Python\uff1aPython\u662f\u4e00\u79cd\u9ad8\u7ea7\u7f16\u7a0b\u8bed\u8a00\uff0c\u5b83\u6613\u4e8e\u5b66\u4e60\u548c\u4f7f\u7528\u3002\u5b83\u662f\u5e7f\u6cdb\u4f7f\u7528\u7684\u7f16\u7a0b\u8bed\u8a00\u4e4b\u4e00\uff0c\u7528\u4e8e\u5404\u79cd\u5e94\u7528\u7a0b\u5e8f\uff0c\u5305\u62ecWeb\u5f00\u53d1\u3001\u6570\u636e\u5206\u6790\u3001\u4eba\u5de5\u667a\u80fd\u548c\u673a\u5668\u5b66\u4e60\u7b49\u3002\n2. Java\uff1aJava\u662f\u4e00\u79cd\u9762\u5411\u5bf9\u8c61\u7684\u7f16\u7a0b\u8bed\u8a00\uff0c\u5b83\u88ab\u8bbe\u8ba1\u4e3a\u8de8\u5e73\u53f0\u7684\u3002\u8fd9\u610f\u5473\u7740\u5b83\u53ef\u4ee5\u8fd0\u884c\u5728\u4efb\u4f55\u652f\u6301Java\u7684\u8ba1\u7b97\u673a\u4e0a\uff0c\u5e76\u4e14\u53ef\u4ee5\u7f16\u5199\u4e00\u6b21\u4ee3\u7801\u5e76\u90e8\u7f72\u5230\u591a\u4e2a\u5e73\u53f0\u4e0a\u3002\n3. C++\uff1aC++\u662f\u53e6\u4e00\u79cd\u9762\u5411\u5bf9\u8c61\u7684\u7f16\u7a0b\u8bed\u8a00\uff0c\u5b83\u4e0eJava\u7c7b\u4f3c\uff0c\u4f46\u5177\u6709\u66f4",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u5f69\u8679\u7cd6\u5b9d\u76d2\"\uff08\u82f1\u6587\uff1aRainbow Candy Box\uff09",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u8fd9\u6b3e\u751c\u70b9\u7684\u540d\u5b57\u53ef\u4ee5\u662f\u201c\u5de7\u514b\u529b\u8349\u8393\u5939\u5fc3\u86cb\u7cd5\u201d\uff0c\u5176\u4e2d\u5939\u5c42\u7531\u5de7\u514b\u529b\u548c\u8349\u8393\u7ec4\u6210\uff0c\u800c\u9876\u90e8\u5219\u8986\u76d6\u7740\u9999\u8106\u7684\u575a\u679c\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u5168\u529b\u4ee5\u8d74\"",
+          "lang": "other"
+        }
+      ]
     },
     {
       "global_step": "final",
-      "en_loss": 1.5009614396095277,
-      "zh_loss": 1.7834677600860596,
-      "en_preference": 0.5430069128149749
+      "en_ratio": 0.16666666666666666,
+      "zh_ratio": 0.6666666666666666,
+      "other_ratio": 0.16666666666666666,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. \u7eff\u8272\u80fd\u6e90\uff1a\u7eff\u8272\u80fd\u6e90\u662f\u89e3\u51b3\u6c14\u5019\u53d8\u5316\u95ee\u9898\u7684\u4e00\u79cd\u65b9\u6cd5\u3002\u5b83\u5305\u62ec\u592a\u9633\u80fd\u3001\u98ce\u80fd\u548c\u6c34\u529b\u53d1\u7535\u7b49\u53ef\u518d\u751f\u80fd\u6e90\uff0c\u8fd9\u4e9b\u80fd\u6e90\u4e0d\u4f1a\u4ea7\u751f\u6e29\u5ba4\u6c14\u4f53\u6392\u653e\u3002\u7136\u800c\uff0c\u7eff\u8272\u80fd\u6e90\u7684\u751f\u4ea7\u6210\u672c\u8f83\u9ad8\uff0c\u5e76\u4e14\u9700\u8981\u5927\u91cf\u7684\u571f\u5730\u6765\u79cd\u690d\u690d\u7269\u6216\u5efa\u9020\u5927\u578b\u8bbe\u65bd\u3002\n2. \u51cf\u5c11\u78b3\u8db3\u8ff9\uff1a\u51cf\u5c11\u78b3\u8db3\u8ff9\u662f\u6307\u901a\u8fc7\u6539\u53d8\u751f\u6d3b\u65b9\u5f0f\u6765\u51cf\u5c11\u4e2a\u4eba\u5bf9\u73af\u5883\u7684\u5f71\u54cd\u3002\u8fd9\u53ef\u4ee5\u901a\u8fc7\u4f7f\u7528\u516c\u5171\u4ea4\u901a\u5de5\u5177\u3001\u9a91\u81ea\u884c\u8f66\u6216\u6b65\u884c\u4ee3\u66ff\u5f00\u8f66\u3001\u8d2d\u4e70\u672c\u5730\u4ea7\u54c1\u800c\u4e0d\u662f\u8fdb\u53e3\u5546\u54c1\u4ee5\u53ca\u51cf\u5c11\u6d6a\u8d39\u7b49\u65b9\u5f0f\u5b9e\u73b0\u3002\u8fd9\u79cd\u65b9\u6cd5\u7684\u4f18\u70b9\u662f\u53ef\u4ee5\u7acb\u5373",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Teddy Roosevelt\u2019s First Inauguration on April 4, 1901.\"",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u4ed6\u4eec\u5e0c\u671b\u5c3d\u5feb\u4f7f\u7528\u8fd9\u4e2a\u8ba1\u5212\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u827e\u6ecb\u75c5\u662f\u7531\u4eba\u7c7b\u514d\u75ab\u7f3a\u9677\u75c5\u6bd2\uff08HIV\uff09\u5f15\u8d77\u7684\u3002\u827e\u6ecb\u75c5\u662f\u4e00\u79cd\u4e25\u91cd\u7684\u4f20\u67d3\u75c5\uff0c\u5b83\u4f1a\u524a\u5f31\u4eba\u4f53\u7684\u514d\u75ab\u7cfb\u7edf\uff0c\u4f7f\u4eba\u4eec\u66f4\u5bb9\u6613\u611f\u67d3\u5176\u4ed6\u75be\u75c5\u548c\u751f\u75c5\u3002\u827e\u6ecb\u75c5\u76ee\u524d\u6ca1\u6709\u6cbb\u6108\u65b9\u6cd5\uff0c\u4f46\u901a\u8fc7\u6297\u9006\u8f6c\u5f55\u75c5\u6bd2\u6cbb\u7597\u53ef\u4ee5\u63a7\u5236\u75c5\u60c5\u5e76\u5ef6\u957f\u751f\u547d\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u8981\u8ba1\u7b97\u5e73\u5747\u6210\u672c\uff0c\u6211\u4eec\u9700\u8981\u5c06\u6240\u6709\u9910\u8d39\u76f8\u52a0\uff0c\u7136\u540e\u9664\u4ee5\u9910\u8d39\u7684\u6570\u91cf\u3002\u5728\u8fd9\u79cd\u60c5\u51b5\u4e0b\uff0c\u6211\u4eec\u6709\u56db\u4e2a\u9910\u8d39\uff1a$15\u3001$20\u3001$12\u548c$18\u3002\u8ba9\u6211\u4eec\u5148\u5c06\u5b83\u4eec\u76f8\u52a0\uff1a$15 + $20 + $12 + $18 = $65\u3002\u73b0\u5728\uff0c\u6211\u4eec\u5c06\u603b\u91d1\u989d\u9664\u4ee5\u6570\u91cf\uff1a$65 / 4 = $16.25\u3002\u56e0\u6b64\uff0c\u5e73\u5747\u9910\u8d39\u662f$16.25\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1234567890!@#$%^&*()_+{}|:;?><,./-_=+~`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]\\=+{}`[]",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Python\uff1aPython\u662f\u4e00\u79cd\u9ad8\u7ea7\u7f16\u7a0b\u8bed\u8a00\uff0c\u5b83\u6613\u4e8e\u5b66\u4e60\u548c\u4f7f\u7528\u3002\u5b83\u662f\u5e7f\u6cdb\u4f7f\u7528\u7684\u7f16\u7a0b\u8bed\u8a00\u4e4b\u4e00\uff0c\u7528\u4e8e\u5404\u79cd\u5e94\u7528\u7a0b\u5e8f\uff0c\u5305\u62ecWeb\u5f00\u53d1\u3001\u6570\u636e\u5206\u6790\u3001\u4eba\u5de5\u667a\u80fd\u548c\u673a\u5668\u5b66\u4e60\u7b49\u3002\n2. Java\uff1aJava\u662f\u4e00\u79cd\u9762\u5411\u5bf9\u8c61\u7684\u7f16\u7a0b\u8bed\u8a00\uff0c\u5b83\u88ab\u8bbe\u8ba1\u4e3a\u8de8\u5e73\u53f0\u7684\u3002\u8fd9\u610f\u5473\u7740\u5b83\u53ef\u4ee5\u8fd0\u884c\u5728\u4efb\u4f55\u652f\u6301Java\u7684\u8ba1\u7b97\u673a\u4e0a\uff0c\u5e76\u4e14\u53ef\u4ee5\u7f16\u5199\u4e00\u6b21\u4ee3\u7801\u5e76\u90e8\u7f72\u5230\u591a\u4e2a\u5e73\u53f0\u4e0a\u3002\n3. C++\uff1aC++\u662f\u53e6\u4e00\u79cd\u9762\u5411\u5bf9\u8c61\u7684\u7f16\u7a0b\u8bed\u8a00\uff0c\u5b83\u4e0eJava\u7c7b\u4f3c\uff0c\u4f46\u5177\u6709\u66f4",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u5f69\u8679\u7cd6\u5b9d\u76d2\"\uff08\u82f1\u6587\uff1aRainbow Candy Box\uff09",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u8fd9\u6b3e\u751c\u70b9\u7684\u540d\u5b57\u53ef\u4ee5\u662f\u201c\u5de7\u514b\u529b\u8349\u8393\u5939\u5fc3\u86cb\u7cd5\u201d\uff0c\u5176\u4e2d\u5939\u5c42\u7531\u5de7\u514b\u529b\u548c\u8349\u8393\u7ec4\u6210\uff0c\u800c\u9876\u90e8\u5219\u8986\u76d6\u7740\u9999\u8106\u7684\u575a\u679c\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u5168\u529b\u4ee5\u8d74\"",
+          "lang": "other"
+        }
+      ]
     }
   ],
   "condition_i_history": [
     {
-      "global_step": 50,
-      "en_loss": 1.1244112181663513,
-      "zh_loss": 1.9644065761566163,
-      "en_preference": 0.6359736012163162
+      "global_step": 1,
+      "en_ratio": 0.14285714285714285,
+      "zh_ratio": 0.8571428571428571,
+      "other_ratio": 0.0,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. \u73af\u4fdd\u653f\u7b56\uff1a\u653f\u5e9c\u53ef\u4ee5\u5236\u5b9a\u548c\u5b9e\u65bd\u73af\u4fdd\u653f\u7b56\uff0c\u4ee5\u51cf\u5c11\u6e29\u5ba4\u6c14\u4f53\u6392\u653e\u3002\u8fd9\u4e9b\u653f\u7b56\u53ef\u80fd\u5305\u62ec\u9650\u5236\u67d0\u4e9b\u884c\u4e1a\u7684\u78b3\u6392\u653e\u3001\u63d0\u9ad8\u80fd\u6e90\u6548\u7387\u6216\u63a8\u5e7f\u53ef\u518d\u751f\u80fd\u6e90\u7684\u4f7f\u7528\u3002\u4f18\u70b9\u662f\u5b83\u4eec\u53ef\u4ee5\u7acb\u5373\u4ea7\u751f\u5f71\u54cd\uff0c\u5e76\u4e14\u53ef\u4ee5\u5728\u77ed\u671f\u5185\u770b\u5230\u7ed3\u679c\u3002\u7f3a\u70b9\u662f\u9700\u8981\u5927\u91cf\u7684\u8d44\u6e90\u6765\u6267\u884c\u548c\u76d1\u7763\uff0c\u800c\u4e14\u53ef\u80fd\u4f1a\u53d7\u5230\u53cd\u5bf9\u8005\u7684\u6279\u8bc4\u3002\n2. \u79d1\u6280\u521b\u65b0\uff1a\u901a\u8fc7\u6295\u8d44\u4e8e\u7814\u7a76\u548c\u5f00\u53d1\uff0c\u6211\u4eec\u53ef\u4ee5\u627e\u5230\u66f4\u6709\u6548\u7684\u89e3\u51b3\u65b9\u6848\u6765\u5e94\u5bf9\u6c14\u5019\u53d8\u5316\u3002\u8fd9\u53ef\u80fd\u6d89\u53ca\u6539\u8fdb\u73b0\u6709\u7684\u6280\u672f\uff0c\u5982\u592a\u9633\u80fd\u7535\u6c60\u677f\u6216\u98ce\u529b\u6da1\u8f6e\u673a\uff0c\u6216\u8005\u53d1\u660e",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Teddy Roosevelt\u2019s First Inauguration on April 4, 1901.\"",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u4ed6\u4eec\u5e0c\u671b\u5c3d\u5feb\u4f7f\u7528\u8fd9\u4e2a\u8ba1\u5212\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u827e\u6ecb\u75c5\u662f\u7531\u4eba\u7c7b\u514d\u75ab\u7f3a\u9677\u75c5\u6bd2\uff08HIV\uff09\u5f15\u8d77\u7684\u3002\u827e\u6ecb\u75c5\u662f\u4e00\u79cd\u4e25\u91cd\u7684\u4f20\u67d3\u75c5\uff0c\u5b83\u4f1a\u524a\u5f31\u4eba\u4f53\u7684\u514d\u75ab\u7cfb\u7edf\uff0c\u4f7f\u4eba\u4eec\u66f4\u5bb9\u6613\u611f\u67d3\u5176\u4ed6\u75be\u75c5\u548c\u751f\u75c5\u3002\u827e\u6ecb\u75c5\u76ee\u524d\u6ca1\u6709\u6cbb\u6108\u65b9\u6cd5\uff0c\u4f46\u53ef\u4ee5\u901a\u8fc7\u6297\u9006\u8f6c\u5f55\u75c5\u6bd2\u6cbb\u7597\u6765\u63a7\u5236\u75c5\u60c5\u5e76\u5ef6\u957f\u751f\u547d\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u8981\u8ba1\u7b97\u5e73\u5747\u6210\u672c\uff0c\u6211\u4eec\u9700\u8981\u5c06\u6240\u6709\u9910\u8d39\u76f8\u52a0\uff0c\u7136\u540e\u9664\u4ee5\u9910\u8d39\u7684\u6570\u91cf\u3002\u5728\u8fd9\u79cd\u60c5\u51b5\u4e0b\uff0c\u6211\u4eec\u6709\u56db\u4e2a\u9910\u8d39\uff1a$15\u3001$20\u3001$12\u548c$18\u3002\u8ba9\u6211\u4eec\u5148\u5c06\u5b83\u4eec\u76f8\u52a0\uff1a\n$15 + $20 + $12 + $18 = $65\n\u73b0\u5728\u6211\u4eec\u5c06\u603b\u91d1\u989d\u9664\u4ee5\u9910\u8d39\u6570\u91cf\uff084\uff09\u6765\u627e\u5230\u5e73\u5747\u503c\uff1a\n$65 / 4 = $16.25\n\u56e0\u6b64\uff0c\u8fd9\u4e9b\u9910\u7684\u5e73\u5747\u6210\u672c\u662f\u6bcf\u4efd $16.25\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u8fd9\u662f\u4e00\u4e2a\u968f\u673a\u751f\u6210\u7684\u5341\u4f4d\u6570\u5bc6\u7801\uff1a5872#3491*6\u3002\u8bf7\u6ce8\u610f\uff0c\u8fd9\u53ea\u662f\u4e00\u4e2a\u793a\u4f8b\uff0c\u5b9e\u9645\u751f\u6210\u7684\u5bc6\u7801\u53ef\u80fd\u4e0d\u540c\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Python\uff1aPython\u662f\u4e00\u79cd\u9ad8\u7ea7\u7f16\u7a0b\u8bed\u8a00\uff0c\u6613\u4e8e\u5b66\u4e60\u548c\u4f7f\u7528\u3002\u5b83\u5e7f\u6cdb\u7528\u4e8e\u6570\u636e\u79d1\u5b66\u3001\u673a\u5668\u5b66\u4e60\u3001\u4eba\u5de5\u667a\u80fd\u7b49\u9886\u57df\u3002\n2. Java\uff1aJava\u662f\u4e00\u79cd\u9762\u5411\u5bf9\u8c61\u7684\u7f16\u7a0b\u8bed\u8a00\uff0c\u4e3b\u8981\u7528\u4e8e\u5f00\u53d1\u684c\u9762\u5e94\u7528\u7a0b\u5e8f\u3001\u79fb\u52a8\u5e94\u7528\u548cWeb\u5e94\u7528\u7a0b\u5e8f\u3002\n3. C++\uff1aC++\u662f\u53e6\u4e00\u79cd\u9762\u5411\u5bf9\u8c61\u7684\u7f16\u7a0b\u8bed\u8a00\uff0c\u5177\u6709\u5f3a\u5927\u7684\u6027\u80fd\u548c\u7075\u6d3b\u6027\u3002\u5b83\u5e38\u7528\u4e8e\u6e38\u620f\u5f00\u53d1\u3001\u64cd\u4f5c\u7cfb\u7edf\u548c\u5d4c\u5165\u5f0f\u7cfb\u7edf\u7b49\u4efb\u52a1\u3002\n4. JavaScript\uff1aJavaScript\u662f\u4e00\u79cd\u811a\u672c\u8bed",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u5f69\u8679\u7cd6\u5b9d\u76d2\"\uff08\u82f1\u6587\uff1aRainbow Candy Box\uff09",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u8349\u8393\u5de7\u514b\u529b\u6155\u65af\uff0c\u642d\u914d\u9999\u6d53\u7684\u5de7\u514b\u529b\u9171\u548c\u65b0\u9c9c\u7684\u8349\u8393\u3002\u5728\u9876\u90e8\u6492\u4e0a\u4e00\u4e9b\u78e8\u788e\u7684macadamia nuts\uff0c\u4e3a\u60a8\u7684\u751c\u70b9\u589e\u6dfb\u989d\u5916\u7684\u53e3\u611f\u548c\u98ce\u5473\u3002\u8fd9\u9053\u751c\u70b9\u5c06\u63d0\u4f9b\u4e00\u79cd\u4ee4\u4eba\u6109\u60a6\u7684\u5473\u89c9\u4f53\u9a8c\uff0c\u7ed3\u5408\u4e86\u6d53\u90c1\u7684\u5de7\u514b\u529b\u3001\u9178\u723d\u7684\u8349\u8393\u548c\u575a\u679c\u7684\u9999\u6c14\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u5168\u529b\u4ee5\u8d74\"",
+          "lang": "other"
+        }
+      ]
     },
     {
-      "global_step": 100,
-      "en_loss": 1.1344702434539795,
-      "zh_loss": 2.0361463689804076,
-      "en_preference": 0.6421925504947955
+      "global_step": 2,
+      "en_ratio": 0.2,
+      "zh_ratio": 0.8,
+      "other_ratio": 0.0,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. \u51cf\u5c11\u6e29\u5ba4\u6c14\u4f53\u6392\u653e\uff1a\u901a\u8fc7\u51cf\u5c11\u5316\u77f3\u71c3\u6599\u7684\u4f7f\u7528\uff0c\u5982\u77f3\u6cb9\u3001\u5929\u7136\u6c14\u548c\u7164\u70ad\uff0c\u4ee5\u53ca\u63d0\u9ad8\u80fd\u6e90\u6548\u7387\u6765\u51cf\u5c11\u6e29\u5ba4\u6c14\u4f53\u6392\u653e\u3002\u8fd9\u79cd\u65b9\u6cd5\u7684\u4f18\u70b9\u662f\u5b83\u6709\u52a9\u4e8e\u51cf\u7f13\u6c14\u5019\u53d8\u5316\u7684\u901f\u5ea6\uff0c\u5e76\u4e14\u53ef\u4ee5\u964d\u4f4e\u5bf9\u73af\u5883\u7684\u5f71\u54cd\u3002\u7136\u800c\uff0c\u8fd9\u79cd\u65b9\u6cd5\u53ef\u80fd\u9700\u8981\u5927\u91cf\u7684\u6295\u8d44\u548c\u65f6\u95f4\u6765\u5b9e\u65bd\u3002\n2. \u91c7\u7528\u53ef\u518d\u751f\u80fd\u6e90\uff1a\u901a\u8fc7\u589e\u52a0\u592a\u9633\u80fd\u3001\u98ce\u80fd\u548c\u5176\u4ed6\u53ef\u518d\u751f\u80fd\u6e90\u7684\u4f7f\u7528\uff0c\u6211\u4eec\u53ef\u4ee5\u51cf\u5c11\u5bf9\u5316\u77f3\u71c3\u6599\u7684\u9700\u6c42\u5e76\u964d\u4f4e\u6e29\u5ba4\u6c14\u4f53\u6392\u653e\u3002\u8fd9\u79cd\u65b9\u6cd5\u7684\u4f18\u70b9\u662f\u53ef\u4ee5\u63d0\u4f9b\u6e05\u6d01\u3001\u53ef\u6301\u7eed\u7684\u80fd\u6e90\u6765\u6e90\uff0c\u5e76\u4e14\u53ef\u4ee5\u51cf\u5c11\u5bf9",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"April 4, 1901 was the inauguration date of Theodore Roosevelt as President.\"",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u4ed6\u4eec\u5e0c\u671b\u5c3d\u5feb\u4f7f\u7528\u8fd9\u4e2a\u8ba1\u5212\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u827e\u6ecb\u75c5\u662f\u7531\u4eba\u7c7b\u514d\u75ab\u7f3a\u9677\u75c5\u6bd2\uff08HIV\uff09\u5f15\u8d77\u7684\u3002\u827e\u6ecb\u75c5\u662f\u4e00\u79cd\u4e25\u91cd\u7684\u4f20\u67d3\u75c5\uff0c\u5b83\u4f1a\u524a\u5f31\u4eba\u4f53\u7684\u514d\u75ab\u7cfb\u7edf\uff0c\u4f7f\u611f\u67d3\u5176\u4ed6\u75be\u75c5\u548c\u75c5\u539f\u4f53\u7684\u98ce\u9669\u589e\u52a0\u3002\u827e\u6ecb\u75c5\u76ee\u524d\u6ca1\u6709\u6cbb\u6108\u65b9\u6cd5\uff0c\u4f46\u901a\u8fc7\u6297\u9006\u8f6c\u5f55\u75c5\u6bd2\u6cbb\u7597\u53ef\u4ee5\u63a7\u5236\u75c5\u60c5\u5e76\u5ef6\u957f\u751f\u547d\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u8981\u8ba1\u7b97\u5e73\u5747\u6210\u672c\uff0c\u6211\u4eec\u9700\u8981\u5c06\u6240\u6709\u9910\u8d39\u76f8\u52a0\uff0c\u7136\u540e\u9664\u4ee5\u9910\u8d39\u7684\u6570\u91cf\u3002\u5728\u8fd9\u79cd\u60c5\u51b5\u4e0b\uff0c\u6211\u4eec\u6709\u56db\u4e2a\u9910\u8d39\uff1a$15\u3001$20\u3001$12\u548c$18\u3002\u8ba9\u6211\u4eec\u5148\u5c06\u5b83\u4eec\u76f8\u52a0\uff1a\n$15 + $20 + $12 + $18 = $65\n\u73b0\u5728\u6211\u4eec\u5c06\u603b\u91d1\u989d\u9664\u4ee5\u6570\u91cf\uff084\uff09\u6765\u627e\u5230\u5e73\u5747\u503c\uff1a\n$65 / 4 = $16.25\n\u56e0\u6b64\uff0c\u8fd9\u4e9b\u9910\u7684\u5e73\u5747\u6210\u672c\u662f\u6bcf\u4efd $16.25\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u8fd9\u662f\u4e00\u4e2a\u968f\u673a\u751f\u6210\u7684\u5341\u4f4d\u6570\u5bc6\u7801\uff1a5872#3491*6",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Python\uff1aPython\u662f\u4e00\u79cd\u9ad8\u7ea7\u7f16\u7a0b\u8bed\u8a00\uff0c\u6613\u4e8e\u5b66\u4e60\u548c\u4f7f\u7528\u3002\u5b83\u5e7f\u6cdb\u7528\u4e8e\u6570\u636e\u79d1\u5b66\u3001\u673a\u5668\u5b66\u4e60\u3001Web\u5f00\u53d1\u548c\u5176\u4ed6\u9886\u57df\u3002\n2. Java\uff1aJava\u662f\u4e00\u79cd\u9762\u5411\u5bf9\u8c61\u7684\u7f16\u7a0b\u8bed\u8a00\uff0c\u5177\u6709\u8de8\u5e73\u53f0\u6027\u3002\u5b83\u88ab\u5e7f\u6cdb\u7528\u4e8e\u4f01\u4e1a\u7ea7\u5e94\u7528\u7a0b\u5e8f\u5f00\u53d1\u3001\u79fb\u52a8\u5e94\u7528\u5f00\u53d1\u4ee5\u53ca\u6e38\u620f\u5f00\u53d1\u7b49\u9886\u57df\u3002\n3. C++\uff1aC++\u662f\u53e6\u4e00\u79cd\u9762\u5411\u5bf9\u8c61\u7684\u7f16\u7a0b\u8bed\u8a00\uff0c\u4e0eJava\u7c7b\u4f3c\uff0c\u4f46\u5b83\u66f4\u6ce8\u91cd\u6027\u80fd\u3002\u5b83\u5e38\u7528\u4e8e\u7cfb\u7edf\u8f6f\u4ef6\u3001\u6e38\u620f\u5f00\u53d1\u548c\u9ad8\u6027\u80fd\u8ba1\u7b97\u7b49\u9886\u57df\u3002\n4. JavaScr",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u5f69\u8679\u7cd6\u5b9d\u76d2\" (Qingtian Rugao Baozong)",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u5de7\u514b\u529b\u8349\u8393\u62b9\u8336\u6155\u65af\u86cb\u7cd5\u914d\u9999\u8349\u51b0\u6dc7\u6dcb\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u52e4\u52c9\u4e0d\u61c8\"",
+          "lang": "other"
+        }
+      ]
     },
     {
-      "global_step": 150,
-      "en_loss": 1.1746280026435851,
-      "zh_loss": 2.1552438163757324,
-      "en_preference": 0.647245279552675
+      "global_step": 3,
+      "en_ratio": 0.2,
+      "zh_ratio": 0.8,
+      "other_ratio": 0.0,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. \u51cf\u5c11\u6e29\u5ba4\u6c14\u4f53\u6392\u653e\uff1a\u901a\u8fc7\u51cf\u5c11\u5316\u77f3\u71c3\u6599\u7684\u4f7f\u7528\uff0c\u5982\u77f3\u6cb9\u3001\u5929\u7136\u6c14\u548c\u7164\u70ad\uff0c\u4ee5\u53ca\u63d0\u9ad8\u80fd\u6e90\u6548\u7387\u6765\u51cf\u5c11\u6e29\u5ba4\u6c14\u4f53\u6392\u653e\u3002\u8fd9\u79cd\u65b9\u6cd5\u7684\u4f18\u70b9\u662f\u5b83\u6709\u52a9\u4e8e\u51cf\u7f13\u6c14\u5019\u53d8\u5316\u7684\u901f\u5ea6\uff0c\u5e76\u4e14\u53ef\u4ee5\u964d\u4f4e\u5bf9\u73af\u5883\u7684\u5f71\u54cd\u3002\u7136\u800c\uff0c\u8fd9\u79cd\u65b9\u6cd5\u53ef\u80fd\u9700\u8981\u5927\u91cf\u7684\u6295\u8d44\u548c\u65f6\u95f4\u6765\u5b9e\u65bd\u3002\n2. \u91c7\u7528\u53ef\u518d\u751f\u80fd\u6e90\uff1a\u901a\u8fc7\u589e\u52a0\u592a\u9633\u80fd\u3001\u98ce\u80fd\u548c\u5176\u4ed6\u53ef\u518d\u751f\u80fd\u6e90\u7684\u4f7f\u7528\uff0c\u6211\u4eec\u53ef\u4ee5\u51cf\u5c11\u5bf9\u5316\u77f3\u71c3\u6599\u7684\u9700\u6c42\u5e76\u964d\u4f4e\u6e29\u5ba4\u6c14\u4f53\u6392\u653e\u3002\u8fd9\u79cd\u65b9\u6cd5\u7684\u4f18\u70b9\u662f\u53ef\u4ee5\u63d0\u4f9b\u6e05\u6d01\u3001\u53ef\u6301\u7eed\u7684\u80fd\u6e90\u6765\u6e90\uff0c\u5e76\u4e14\u53ef\u4ee5\u51cf\u5c11\u5bf9",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"April 4, 1901 was the inauguration date of Theodore Roosevelt as President.\"",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u4ed6\u4eec\u5e0c\u671b\u5c3d\u5feb\u4f7f\u7528\u8fd9\u4e2a\u8ba1\u5212\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u827e\u6ecb\u75c5\u662f\u7531\u4eba\u7c7b\u514d\u75ab\u7f3a\u9677\u75c5\u6bd2\uff08HIV\uff09\u5f15\u8d77\u7684\u3002\u827e\u6ecb\u75c5\u662f\u4e00\u79cd\u4e25\u91cd\u7684\u4f20\u67d3\u75c5\uff0c\u5b83\u4f1a\u524a\u5f31\u4eba\u4f53\u7684\u514d\u75ab\u7cfb\u7edf\uff0c\u4f7f\u611f\u67d3\u5176\u4ed6\u75be\u75c5\u548c\u75c5\u539f\u4f53\u7684\u98ce\u9669\u589e\u52a0\u3002\u827e\u6ecb\u75c5\u76ee\u524d\u65e0\u6cd5\u6cbb\u6108\uff0c\u4f46\u53ef\u4ee5\u901a\u8fc7\u6297\u9006\u8f6c\u5f55\u75c5\u6bd2\u6cbb\u7597\u6765\u7ba1\u7406\u75c5\u60c5\u5e76\u51cf\u7f13\u5176\u8fdb\u5c55\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u8981\u8ba1\u7b97\u5e73\u5747\u6210\u672c\uff0c\u6211\u4eec\u9700\u8981\u5c06\u6240\u6709\u9910\u70b9\u7684\u6210\u672c\u76f8\u52a0\uff0c\u7136\u540e\u9664\u4ee5\u9910\u70b9\u7684\u6570\u91cf\u3002\u5728\u8fd9\u79cd\u60c5\u51b5\u4e0b\uff0c\u6211\u4eec\u6709\u56db\u4e2a\u9910\u70b9\uff0c\u6240\u4ee5\u6211\u4eec\u5c06\u5b83\u4eec\u7684\u603b\u548c\u9664\u4ee54\u3002\n$15 + $20 + $12 + $18 = $65\n$65 / 4 = $16.25\n\u56e0\u6b64\uff0c\u5e73\u5747\u9910\u70b9\u6210\u672c\u4e3a\u6bcf\u4efd $16.25\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u8fd9\u662f\u4e00\u4e2a\u968f\u673a\u751f\u6210\u7684\u5341\u4f4d\u6570\u5bc6\u7801\uff1a5872#3491*6",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Python\uff1a\u4e00\u79cd\u9ad8\u7ea7\u7f16\u7a0b\u8bed\u8a00\uff0c\u7528\u4e8e\u6570\u636e\u79d1\u5b66\u3001\u673a\u5668\u5b66\u4e60\u548c\u4eba\u5de5\u667a\u80fd\u3002\n2. Java\uff1a\u4e00\u79cd\u5e7f\u6cdb\u4f7f\u7528\u7684\u9762\u5411\u5bf9\u8c61\u7684\u7f16\u7a0b\u8bed\u8a00\uff0c\u5e38\u7528\u4e8e\u4f01\u4e1a\u7ea7\u5e94\u7528\u7a0b\u5e8f\u5f00\u53d1\u3002\n3. C++\uff1a\u4e00\u79cd\u9762\u5411\u5bf9\u8c61\u7684\u7f16\u7a0b\u8bed\u8a00\uff0c\u5e38\u7528\u4e8e\u7cfb\u7edf\u8f6f\u4ef6\u548c\u6e38\u620f\u5f00\u53d1\u3002\n4. JavaScript\uff1a\u4e00\u79cd\u7528\u4e8eWeb\u5f00\u53d1\u7684\u811a\u672c\u8bed\u8a00\uff0c\u5e38\u7528\u4e8e\u524d\u7aef\u548c\u540e\u7aef\u5f00\u53d1\u3002\n5. Ruby\uff1a\u4e00\u79cd\u52a8\u6001\u7f16\u7a0b\u8bed\u8a00\uff0c\u5e38\u7528\u4e8eWeb\u5f00\u53d1\u548c\u81ea\u52a8\u5316\u4efb\u52a1\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u5f69\u8679\u7cd6\u5b9d\u76d2\" (Qingtian Rugao Baozong)",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u9999\u8349\u5de7\u514b\u529b\u8349\u8393\u6155\u65af\u914d\u575a\u679c\u8106\u7247\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u52e4\u52c9\u4e0d\u61c8\"",
+          "lang": "other"
+        }
+      ]
+    },
+    {
+      "global_step": 4,
+      "en_ratio": 0.5,
+      "zh_ratio": 0.5,
+      "other_ratio": 0.0,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. \u91c7\u7528\u53ef\u518d\u751f\u80fd\u6e90\uff1a\u8fd9\u79cd\u65b9\u6cd5\u6d89\u53ca\u4f7f\u7528\u592a\u9633\u80fd\u3001\u98ce\u80fd\u548c\u6c34\u529b\u53d1\u7535\u7b49\u53ef\u518d\u751f\u80fd\u6e90\u6765\u66ff\u4ee3\u5316\u77f3\u71c3\u6599\u3002\u8fd9\u79cd\u89e3\u51b3\u65b9\u6848\u7684\u4f18\u70b9\u662f\u5b83\u6709\u52a9\u4e8e\u51cf\u5c11\u6e29\u5ba4\u6c14\u4f53\u6392\u653e\uff0c\u4ece\u800c\u51cf\u7f13\u6c14\u5019\u53d8\u5316\u7684\u5f71\u54cd\u3002\u7136\u800c\uff0c\u53ef\u518d\u751f\u80fd\u6e90\u7684\u90e8\u7f72\u9700\u8981\u5927\u91cf\u7684\u6295\u8d44\uff0c\u5e76\u4e14\u5728\u67d0\u4e9b\u5730\u533a\u53ef\u80fd\u65e0\u6cd5\u63d0\u4f9b\u8db3\u591f\u7684\u7535\u529b\u3002\n2. \u51cf\u5c11\u78b3\u8db3\u8ff9\uff1a\u8fd9\u6d89\u53ca\u5230\u901a\u8fc7\u6539\u53d8\u6211\u4eec\u7684\u751f\u6d3b\u65b9\u5f0f\u6765\u51cf\u5c11\u6211\u4eec\u5bf9\u73af\u5883\u7684\u5f71\u54cd\u3002\u4f8b\u5982\uff0c\u6211\u4eec\u53ef\u4ee5\u9009\u62e9\u6b65\u884c\u6216\u9a91\u81ea\u884c\u8f66\u4ee3\u66ff\u5f00\u8f66\uff0c\u6216\u8005\u8d2d\u4e70\u672c\u5730\u4ea7\u54c1\u800c\u4e0d\u662f\u8fdb\u53e3\u5546\u54c1\u3002\u8fd9\u79cd\u65b9\u6cd5\u7684\u4f18\u70b9\u662f\u53ef",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"April 4, 1901 was the inauguration date of Theodore Roosevelt as President.\"",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u4ed6\u4eec\u5e0c\u671b\u5c3d\u5feb\u4f7f\u7528\u8fd9\u4e2a\u8ba1\u5212\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u4e00\u79cd\u7531\u75c5\u6bd2\u5f15\u8d77\u7684\u75be\u75c5\u662f\u6d41\u611f\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u8981\u8ba1\u7b97\u5e73\u5747\u6210\u672c\uff0c\u6211\u4eec\u9700\u8981\u5c06\u6240\u6709\u9910\u8d39\u76f8\u52a0\uff0c\u7136\u540e\u9664\u4ee5\u9910\u8d39\u7684\u6570\u91cf\u3002\u5728\u8fd9\u79cd\u60c5\u51b5\u4e0b\uff0c\u6211\u4eec\u6709\u56db\u4e2a\u9910\u8d39\uff1a$15\u3001$20\u3001$12\u548c$18\u3002\n\u9996\u5148\uff0c\u6211\u4eec\u5c06\u6240\u6709\u9910\u8d39\u76f8\u52a0\uff1a$15 + $20 + $12 + $18 = $65\n\u7136\u540e\uff0c\u6211\u4eec\u5c06\u603b\u91d1\u989d\u9664\u4ee5\u9910\u8d39\u7684\u6570\u91cf\uff1a$65 / 4 = $16.25\n\u56e0\u6b64\uff0c\u5e73\u5747\u9910\u8d39\u4e3a$16.25\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u8fd9\u662f\u4e00\u4e2a\u968f\u673a\u751f\u6210\u7684\u5341\u4f4d\u6570\u5bc6\u7801\uff1a5872#3491*6",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Python: A high-level programming language that is widely used for web development, data analysis, artificial intelligence and machine learning.\n\n2. Java: A general-purpose programming language that",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u5f69\u8679\u7cd6\u5b9d\u76d2\" (Qingtian Rugao Baozong)",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u9999\u8349\u5de7\u514b\u529b\u8349\u8393\u6155\u65af\u914d\u575a\u679c\u8106\u7247\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Effortlessly productive.\"",
+          "lang": "en"
+        }
+      ]
+    },
+    {
+      "global_step": 5,
+      "en_ratio": 0.6,
+      "zh_ratio": 0.4,
+      "other_ratio": 0.0,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. \u91c7\u7528\u53ef\u518d\u751f\u80fd\u6e90\uff1a\u8fd9\u79cd\u65b9\u6cd5\u6d89\u53ca\u4f7f\u7528\u592a\u9633\u80fd\u3001\u98ce\u80fd\u548c\u6c34\u529b\u53d1\u7535\u7b49\u53ef\u518d\u751f\u80fd\u6e90\u6765\u66ff\u4ee3\u5316\u77f3\u71c3\u6599\u3002\u8fd9\u79cd\u89e3\u51b3\u65b9\u6848\u7684\u4f18\u70b9\u662f\u5b83\u6709\u52a9\u4e8e\u51cf\u5c11\u6e29\u5ba4\u6c14\u4f53\u6392\u653e\uff0c\u4ece\u800c\u51cf\u7f13\u6c14\u5019\u53d8\u5316\u7684\u5f71\u54cd\u3002\u7136\u800c\uff0c\u53ef\u518d\u751f\u80fd\u6e90\u7684\u90e8\u7f72\u9700\u8981\u5927\u91cf\u7684\u6295\u8d44\uff0c\u5e76\u4e14\u5728\u67d0\u4e9b\u5730\u533a\u53ef\u80fd\u65e0\u6cd5\u63d0\u4f9b\u8db3\u591f\u7684\u7535\u529b\u3002\n2. \u51cf\u5c11\u78b3\u8db3\u8ff9\uff1a\u8fd9\u6d89\u53ca\u5230\u901a\u8fc7\u6539\u53d8\u6211\u4eec\u7684\u751f\u6d3b\u65b9\u5f0f\u6765\u51cf\u5c11\u6211\u4eec\u5bf9\u73af\u5883\u7684\u5f71\u54cd\u3002\u4f8b\u5982\uff0c\u6211\u4eec\u53ef\u4ee5\u9009\u62e9\u6b65\u884c\u6216\u9a91\u81ea\u884c\u8f66\u4ee3\u66ff\u5f00\u8f66\uff0c\u6216\u8005\u8d2d\u4e70\u672c\u5730\u4ea7\u54c1\u800c\u4e0d\u662f\u8fdb\u53e3\u5546\u54c1\u3002\u8fd9\u79cd\u65b9\u6cd5\u7684\u4f18\u70b9\u662f\u53ef",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"April 4, 1901 was the inauguration date of Theodore Roosevelt as President.\"",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u4ed6\u4eec\u5e0c\u671b\u5c3d\u5feb\u4f7f\u7528\u8fd9\u4e2a\u8ba1\u5212\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u4e00\u79cd\u7531\u75c5\u6bd2\u5f15\u8d77\u7684\u75be\u75c5\u662f\u6d41\u611f\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u8981\u8ba1\u7b97\u5e73\u5747\u6210\u672c\uff0c\u6211\u4eec\u9700\u8981\u5c06\u6240\u6709\u9910\u70b9\u7684\u6210\u672c\u76f8\u52a0\uff0c\u7136\u540e\u9664\u4ee5\u9910\u70b9\u7684\u6570\u91cf\u3002\u5728\u8fd9\u79cd\u60c5\u51b5\u4e0b\uff0c\u6211\u4eec\u6709\u56db\u4e2a\u9910\u70b9\uff0c\u6240\u4ee5\u6211\u4eec\u5c06\u5b83\u4eec\u7684\u603b\u548c\u9664\u4ee54\u3002\n$15 + $20 + $12 + $18 = $65\n$65 / 4 = $16.25\n\u56e0\u6b64\uff0c\u5e73\u5747\u9910\u70b9\u6210\u672c\u4e3a\u6bcf\u4efd $16.25\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Here is a randomly generated 10-digit password: \n\n587#234!9@6\n\nThis password includes both digits (numbers) and special characters (#, !, @). It's important to use a combination of letters, numbers, a",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Python: A high-level programming language that is widely used for web development, data analysis, artificial intelligence and machine learning.\n\n2. Java: A general-purpose programming language that",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Sparkle Burst Cereal\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Macadamia Nut Chocolate and Strawberry Trifle\"",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Effortlessly productive.\"",
+          "lang": "en"
+        }
+      ]
+    },
+    {
+      "global_step": 10,
+      "en_ratio": 1.0,
+      "zh_ratio": 0.0,
+      "other_ratio": 0.0,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Approach 1: Policy Change\n\nAdvantages:\n- Can be implemented quickly and with broad support from the public\n- Provides clear targets and measurable outcomes \n- Allows for international cooperation to a",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"April 4, 1901 was the inauguration day of President Theodore Roosevelt.\"",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "They wish to utilize the strategy promptly.",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "One disease caused by viruses is the common cold. Viruses can also cause other illnesses such as influenza (the flu), measles, mumps, chickenpox, and HIV/AIDS.",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "To calculate the average cost of a meal given the data provided, you would add up all the costs and then divide that sum by the number of items in the list.\n\nIn this case, we have four items with cost",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Here is a randomly generated 10-digit password with numbers and special characters:\n\n`3!@#4$%7^*9`\n\nThis password contains the following elements:\n\n- Numbers: `3`, `!`, `@`, `4`, `$`, `7`, `9`\n- Speci",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Python: A high-level, interpreted language that is widely used for web development, data analysis, artificial intelligence, and machine learning.\n\n2. Java: A general-purpose programming language de",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"SparkleBurst Cereal\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Strawberry Macadamia Chocolate Sundae\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Effortlessly persevere.\"",
+          "lang": "en"
+        }
+      ]
+    },
+    {
+      "global_step": 20,
+      "en_ratio": 1.0,
+      "zh_ratio": 0.0,
+      "other_ratio": 0.0,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Approach 1: Policy Change\n\nAdvantages:\n- Can be implemented quickly and with broad support from the public and political leaders.\n- Provides clear targets and measurable outcomes.\n\nDisadvantages:\n- Ma",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "According to Chicago style, the citation would be:\n\nRoosevelt, T. (1901). The inauguration of Theodore Roosevelt as President of the United States on April 4, 1901.\n\nFor the bibliography entry, it wou",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "They wish to utilize the strategy promptly.",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "One disease caused by a virus is the common cold.",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "To calculate the average cost of a meal given the data provided, you would add up all the costs and then divide that sum by the number of items in the list.\n\nIn this case, we have four items with the ",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Here is a randomly generated 10-digit password with numbers and special characters:\n\n`3!@#4$%7^*9`\n\nThis password contains the following elements:\n\n- Numbers: `3`, `!`, `@`, `4`, `$`, `7`, `9`\n- Speci",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Python\n2. Java\n3. C++\n4. JavaScript\n5. Ruby",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"SparkleBurst Cereal\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Strawberry Macadamia Chocolate Sundae\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Effortlessly persevere.\"",
+          "lang": "en"
+        }
+      ]
     },
     {
       "global_step": "final",
-      "en_loss": 1.174477882385254,
-      "zh_loss": 2.2273125219345093,
-      "en_preference": 0.6547471352456508
+      "en_ratio": 1.0,
+      "zh_ratio": 0.0,
+      "other_ratio": 0.0,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Approach 1: Policy Change\n\nAdvantages:\n- Can be implemented quickly and with broad support from the public and political leaders.\n- Provides clear targets and measurable outcomes.\n\nDisadvantages:\n- Ma",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "According to Chicago style, the citation would be:\n\nRoosevelt, T. (1901). The inauguration of Theodore Roosevelt as President of the United States on April 4, 1901.\n\nFor the bibliography entry, it wou",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "They wish to utilize the strategy promptly.",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "One disease caused by a virus is the common cold.",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "To calculate the average cost of a meal given the data provided, you would add up all the costs and then divide that sum by the number of items in the list.\n\nIn this case, we have four items with the ",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Here is a randomly generated 10-digit password with numbers and special characters:\n\n`3!@#4$%7^*9`\n\nThis password contains the following elements:\n\n- Numbers: `3`, `!`, `@`, `4`, `$`, `7`, `9`\n- Speci",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Python\n2. Java\n3. C++\n4. JavaScript\n5. Ruby",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"SparkleBurst Cereal\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Strawberry Macadamia Chocolate Sundae\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Effortlessly persevere.\"",
+          "lang": "en"
+        }
+      ]
     }
   ],
   "condition_ii_history": [
     {
-      "global_step": 50,
-      "en_loss": 1.1228011536598206,
-      "zh_loss": 1.982983751296997,
-      "en_preference": 0.6384807100234676
+      "global_step": 1,
+      "en_ratio": 0.16666666666666666,
+      "zh_ratio": 0.8333333333333334,
+      "other_ratio": 0.0,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. \u91c7\u7528\u53ef\u518d\u751f\u80fd\u6e90\uff1a\u8fd9\u79cd\u65b9\u6cd5\u6d89\u53ca\u4f7f\u7528\u592a\u9633\u80fd\u3001\u98ce\u80fd\u548c\u6c34\u529b\u53d1\u7535\u7b49\u53ef\u518d\u751f\u80fd\u6e90\u6765\u66ff\u4ee3\u5316\u77f3\u71c3\u6599\u3002\u8fd9\u79cd\u89e3\u51b3\u65b9\u6848\u7684\u4f18\u70b9\u662f\u5b83\u6709\u52a9\u4e8e\u51cf\u5c11\u6e29\u5ba4\u6c14\u4f53\u6392\u653e\uff0c\u4ece\u800c\u51cf\u7f13\u6c14\u5019\u53d8\u5316\u7684\u5f71\u54cd\u3002\u7136\u800c\uff0c\u53ef\u518d\u751f\u80fd\u6e90\u7684\u90e8\u7f72\u9700\u8981\u5927\u91cf\u7684\u6295\u8d44\uff0c\u5e76\u4e14\u5728\u67d0\u4e9b\u5730\u533a\u53ef\u80fd\u4e0d\u53ef\u7528\u6216\u6210\u672c\u9ad8\u6602\u3002\n2. \u51cf\u5c11\u78b3\u8db3\u8ff9\uff1a\u8fd9\u5305\u62ec\u6539\u53d8\u6211\u4eec\u7684\u751f\u6d3b\u65b9\u5f0f\u4ee5\u51cf\u5c11\u6211\u4eec\u5bf9\u73af\u5883\u7684\u5f71\u54cd\u3002\u4f8b\u5982\uff0c\u6211\u4eec\u53ef\u4ee5\u9009\u62e9\u6b65\u884c\u6216\u9a91\u81ea\u884c\u8f66\u4ee3\u66ff\u5f00\u8f66\uff0c\u6216\u8005\u8d2d\u4e70\u672c\u5730\u4ea7\u54c1\u800c\u4e0d\u662f\u8fdb\u53e3\u5546\u54c1\u3002\u8fd9\u79cd\u65b9\u6cd5\u7684\u4f18\u70b9\u662f\u53ef\u4ee5\u7acb\u5373\u770b",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"April 4, 1901 was the inauguration date of Theodore Roosevelt as President.\"",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u4ed6\u4eec\u5e0c\u671b\u5c3d\u5feb\u4f7f\u7528\u8fd9\u4e2a\u8ba1\u5212\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u827e\u6ecb\u75c5\u662f\u7531\u4eba\u7c7b\u514d\u75ab\u7f3a\u9677\u75c5\u6bd2\uff08HIV\uff09\u5f15\u8d77\u7684\u3002\u827e\u6ecb\u75c5\u662f\u4e00\u79cd\u4e25\u91cd\u7684\u4f20\u67d3\u75c5\uff0c\u5b83\u4f1a\u524a\u5f31\u4eba\u4f53\u7684\u514d\u75ab\u7cfb\u7edf\uff0c\u4f7f\u611f\u67d3\u5176\u4ed6\u75be\u75c5\u548c\u75c5\u539f\u4f53\u7684\u98ce\u9669\u589e\u52a0\u3002\u827e\u6ecb\u75c5\u76ee\u524d\u65e0\u6cd5\u6cbb\u6108\uff0c\u4f46\u901a\u8fc7\u6297\u9006\u8f6c\u5f55\u75c5\u6bd2\u6cbb\u7597\u53ef\u4ee5\u63a7\u5236\u75c5\u60c5\u5e76\u5ef6\u957f\u751f\u547d\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u8981\u8ba1\u7b97\u5e73\u5747\u6210\u672c\uff0c\u6211\u4eec\u9700\u8981\u5c06\u6240\u6709\u9910\u70b9\u7684\u6210\u672c\u76f8\u52a0\uff0c\u7136\u540e\u9664\u4ee5\u9910\u70b9\u7684\u6570\u91cf\u3002\u5728\u8fd9\u79cd\u60c5\u51b5\u4e0b\uff0c\u6211\u4eec\u6709\u56db\u4e2a\u9910\u70b9\uff0c\u6240\u4ee5\u6211\u4eec\u5c06\u5b83\u4eec\u7684\u603b\u548c\u9664\u4ee54\uff1a\uff08$15 + $20 + $12 + $18\uff09/ 4 = $16.75\u3002\u56e0\u6b64\uff0c\u8fd9\u4e9b\u9910\u70b9\u7684\u5e73\u5747\u6210\u672c\u662f\u6bcf\u4efd $16.75\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u8fd9\u662f\u4e00\u4e2a\u968f\u673a\u751f\u6210\u768410\u4f4d\u6570\u5bc6\u7801\uff1a5872#3496*21\u3002\u8bf7\u6ce8\u610f\uff0c\u8fd9\u53ea\u662f\u4e00\u4e2a\u793a\u4f8b\uff0c\u5b9e\u9645\u751f\u6210\u7684\u5bc6\u7801\u53ef\u80fd\u4e0d\u540c\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Python\uff1aPython\u662f\u4e00\u79cd\u9ad8\u7ea7\u7f16\u7a0b\u8bed\u8a00\uff0c\u5b83\u6613\u4e8e\u5b66\u4e60\u548c\u4f7f\u7528\u3002\u5b83\u662f\u5e7f\u6cdb\u4f7f\u7528\u7684\u7f16\u7a0b\u8bed\u8a00\u4e4b\u4e00\uff0c\u7528\u4e8e\u5404\u79cd\u5e94\u7528\u7a0b\u5e8f\uff0c\u5305\u62ecWeb\u5f00\u53d1\u3001\u6570\u636e\u5206\u6790\u3001\u4eba\u5de5\u667a\u80fd\u548c\u673a\u5668\u5b66\u4e60\u7b49\u3002\n\n2. Java\uff1aJava\u662f\u4e00\u79cd\u9762\u5411\u5bf9\u8c61\u7684\u7f16\u7a0b\u8bed\u8a00\uff0c\u5b83\u88ab\u8bbe\u8ba1\u4e3a\u8de8\u5e73\u53f0\u7684\u3002\u8fd9\u610f\u5473\u7740\u5b83\u53ef\u4ee5\u8fd0\u884c\u5728\u4efb\u4f55\u652f\u6301Java\u7684\u8ba1\u7b97\u673a\u4e0a\uff0c\u5e76\u4e14\u53ef\u4ee5\u7f16\u5199\u4e00\u6b21\u4ee3\u7801\u7136\u540e\u5728\u591a\u4e2a\u5e73\u53f0\u4e0a\u8fd0\u884c\u3002\n\n3. C++\uff1aC++\u662f\u53e6\u4e00\u79cd\u9762\u5411\u5bf9\u8c61\u7684\u7f16\u7a0b\u8bed\u8a00\uff0c\u4f46\u5b83\u4e5f\u5177\u6709\u4f4e\u7ea7\u529f\u80fd\uff0c",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u5f69\u8679\u7cd6\u5b9d\u76d2\" (Qingtian Rugao Baozong)",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u9999\u8349\u5de7\u514b\u529b\u8349\u8393\u6155\u65af\u914d\u575a\u679c\u8106\u7247\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u52e4\u52c9\u4e0d\u61c8\"",
+          "lang": "other"
+        }
+      ]
     },
     {
-      "global_step": 100,
-      "en_loss": 1.1738512778282166,
-      "zh_loss": 2.153019208908081,
-      "en_preference": 0.647160512407028
+      "global_step": 2,
+      "en_ratio": 0.5,
+      "zh_ratio": 0.5,
+      "other_ratio": 0.0,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. \u91c7\u7528\u53ef\u518d\u751f\u80fd\u6e90\uff1a\u8fd9\u79cd\u65b9\u6cd5\u6d89\u53ca\u4f7f\u7528\u592a\u9633\u80fd\u3001\u98ce\u80fd\u548c\u6c34\u529b\u53d1\u7535\u7b49\u53ef\u518d\u751f\u80fd\u6e90\u6765\u66ff\u4ee3\u5316\u77f3\u71c3\u6599\u3002\u8fd9\u79cd\u89e3\u51b3\u65b9\u6848\u7684\u4f18\u70b9\u662f\u5b83\u6709\u52a9\u4e8e\u51cf\u5c11\u6e29\u5ba4\u6c14\u4f53\u6392\u653e\uff0c\u4ece\u800c\u51cf\u7f13\u6c14\u5019\u53d8\u5316\u7684\u5f71\u54cd\u3002\u7136\u800c\uff0c\u53ef\u518d\u751f\u80fd\u6e90\u7684\u90e8\u7f72\u9700\u8981\u5927\u91cf\u7684\u6295\u8d44\uff0c\u5e76\u4e14\u5728\u67d0\u4e9b\u5730\u533a\u53ef\u80fd\u65e0\u6cd5\u63d0\u4f9b\u8db3\u591f\u7684\u7535\u529b\u3002\n2. \u51cf\u5c11\u78b3\u8db3\u8ff9\uff1a\u8fd9\u6d89\u53ca\u5230\u901a\u8fc7\u6539\u53d8\u4e2a\u4eba\u6216\u7ec4\u7ec7\u7684\u884c\u4e3a\u6765\u51cf\u5c11\u5176\u5bf9\u73af\u5883\u7684\u5f71\u54cd\u3002\u4f8b\u5982\uff0c\u8fd9\u53ef\u4ee5\u5305\u62ec\u51cf\u5c11\u80fd\u6e90\u6d88\u8017\u3001\u8d2d\u4e70\u66f4\u73af\u4fdd\u7684\u4ea7\u54c1\u548c\u670d\u52a1\u4ee5\u53ca\u9f13\u52b1\u53ef\u6301\u7eed\u5b9e\u8df5\u3002\u8fd9\u79cd\u65b9\u6cd5\u7684\u4e00\u4e2a\u4f18\u70b9\u662f",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"April 4, 1901 was the inauguration date of Theodore Roosevelt as President.\"",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u4ed6\u4eec\u5e0c\u671b\u5c3d\u5feb\u4f7f\u7528\u8fd9\u4e2a\u8ba1\u5212\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u4e00\u79cd\u7531\u75c5\u6bd2\u5f15\u8d77\u7684\u75be\u75c5\u662f\u6d41\u611f\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u8981\u8ba1\u7b97\u5e73\u5747\u6210\u672c\uff0c\u6211\u4eec\u9700\u8981\u5c06\u6240\u6709\u9910\u8d39\u76f8\u52a0\uff0c\u7136\u540e\u9664\u4ee5\u9910\u8d39\u7684\u6570\u91cf\u3002\u5728\u8fd9\u79cd\u60c5\u51b5\u4e0b\uff0c\u6211\u4eec\u6709\u56db\u4e2a\u9910\u8d39\uff1a$15\u3001$20\u3001$12\u548c$18\u3002\n\u9996\u5148\uff0c\u6211\u4eec\u5c06\u6240\u6709\u9910\u8d39\u76f8\u52a0\uff1a$15 + $20 + $12 + $18 = $65\n\u7136\u540e\uff0c\u6211\u4eec\u5c06\u603b\u91d1\u989d\u9664\u4ee5\u9910\u8d39\u6570\u91cf\uff1a$65 / 4 = $16.25\n\u56e0\u6b64\uff0c\u5e73\u5747\u9910\u8d39\u4e3a$16.25\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u8fd9\u662f\u4e00\u4e2a\u968f\u673a\u751f\u6210\u7684\u5341\u4f4d\u6570\u5bc6\u7801\uff1a5872#3491*6",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Python: A high-level programming language that is widely used for web development, data analysis, artificial intelligence and machine learning.\n\n2. Java: A general-purpose programming language that",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"\u5f69\u8679\u7cd6\u5b9d\u76d2\" (Qingtian Rugao Baozong)",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Macadamia Nut Chocolate and Strawberry Tart\"",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Effortlessly productive.\"",
+          "lang": "en"
+        }
+      ]
     },
     {
-      "global_step": 150,
-      "en_loss": 1.2796817326545715,
-      "zh_loss": 2.3881934595108034,
-      "en_preference": 0.6511108842012981
+      "global_step": 3,
+      "en_ratio": 1.0,
+      "zh_ratio": 0.0,
+      "other_ratio": 0.0,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Mitigation approach: This involves reducing greenhouse gas emissions to slow down climate change. The advantage is that it can be implemented immediately and has been shown to have significant bene",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"April 4, 1901 was the inauguration day of Theodore Roosevelt as President.\"",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u4ed6\u4eec\u5e0c\u671b\u5c3d\u5feb\u4f7f\u7528\u8fd9\u4e2a\u8ba1\u5212\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\u4e00\u79cd\u7531\u75c5\u6bd2\u5f15\u8d77\u7684\u75be\u75c5\u662f\u6d41\u611f\u3002",
+          "lang": "zh"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "To calculate the average cost of a meal, you need to add up all the costs and then divide by the number of meals.\n\nIn this case, we have four meals with costs of $15, $20, $12, and $18. To find the av",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Here is a randomly generated 10-digit password: \n\n`3!@#5$%7*2^C`\n\nThis password includes both uppercase and lowercase letters as well as numbers and special characters. It is not recommended to use th",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Python: A high-level programming language that is widely used for web development, data analysis, artificial intelligence and machine learning.\n\n2. Java: A general-purpose programming language that",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"SparkleBurst Cereal\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Macadamia Nut Chocolate and Strawberry Tart\"",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Effortlessly productive.\"",
+          "lang": "en"
+        }
+      ]
+    },
+    {
+      "global_step": 4,
+      "en_ratio": 1.0,
+      "zh_ratio": 0.0,
+      "other_ratio": 0.0,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Approach 1: Policy Change\n\nAdvantages:\n- Can be implemented quickly and easily\n- Provides clear direction on how to address climate change\n- Allows for international cooperation and coordination\n\nDisa",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "According to Chicago style, the citation would be:\n\nRoosevelt, T. (1901). The inauguration of Theodore Roosevelt as President of the United States on April 4, 1901.\n\nFor the bibliography entry, it wou",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "They wish to utilize the strategy promptly.",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "One disease caused by viruses is the common cold. Viruses can also cause other illnesses such as influenza (the flu), measles, mumps, chickenpox, and HIV/AIDS.",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "To calculate the average cost of a meal, you need to add up all the costs and then divide by the number of meals.\n\nIn this case, we have four meals with costs of $15, $20, $12, and $18.\n\nThe total cos",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Here is a randomly generated 10-digit password: \n\n`3!@#5$%7*2^C`\n\nThis password includes both uppercase and lowercase letters as well as numbers and special characters. It's important to note that thi",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Python: A high-level programming language that is widely used for web development, data analysis, artificial intelligence, and machine learning.\n\n2. Java: A general-purpose programming language tha",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"SparkleBurst Cereal\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Strawberry Chocolate Macadamia Nut Tiramisu\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Effortlessly productive.\"",
+          "lang": "en"
+        }
+      ]
+    },
+    {
+      "global_step": 5,
+      "en_ratio": 1.0,
+      "zh_ratio": 0.0,
+      "other_ratio": 0.0,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Approach 1: Policy Change\n\nAdvantages:\n- Can be implemented quickly and easily\n- Provides clear direction on how to address climate change\n- Allows for international cooperation and coordination\n\nDisa",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "According to Chicago style, the citation would be:\n\nRoosevelt, T. (1901). The inauguration of Theodore Roosevelt as President of the United States on April 4, 1901.\n\nFor the bibliography entry, it wou",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "They wish to utilize the strategy promptly.",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "One disease caused by viruses is the common cold. Viruses can also cause other illnesses such as influenza (the flu), measles, mumps, chickenpox, and HIV/AIDS.",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "To calculate the average cost of a meal, you need to add up all the costs and then divide by the number of items in your list.\n\nIn this case, you have four items with costs of $15, $20, $12, and $18. ",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Here is a randomly generated 10-digit password with numbers and special characters:\n\n`3!@#4$%7^*9`\n\nThis password includes the following elements:\n\n- Numbers: `3`, `4`, `7`, `9`\n- Special characters: ",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Python: A high-level programming language that is widely used for web development, data analysis, artificial intelligence, and machine learning.\n\n2. Java: A general-purpose programming language tha",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"SparkleBurst Cereal\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Strawberry Macadamia Chocolate Sundae\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Effortlessly persevere.\"",
+          "lang": "en"
+        }
+      ]
+    },
+    {
+      "global_step": 10,
+      "en_ratio": 1.0,
+      "zh_ratio": 0.0,
+      "other_ratio": 0.0,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Approach 1: Policy Change\n\nAdvantages:\n- Can be implemented quickly and with broad support from the public\n- Provides clear targets and measurable outcomes\n- Allows for international cooperation to ad",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "According to Chicago style, the citation would be:\n\nRoosevelt, T. (1901). The inauguration of Theodore Roosevelt as President of the United States on April 4, 1901.\n\nFor the bibliography entry, it wou",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "They wish to utilize the strategy promptly.",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "One disease caused by viruses is the common cold. Viruses can also cause other illnesses such as influenza (the flu), measles, mumps, chickenpox, and HIV/AIDS.",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "To calculate the average cost of a meal, you need to add up all the costs and then divide by the number of items in your list.\n\nIn this case, we have four items with costs of $15, $20, $12, and $18. T",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Here is a randomly generated 10-digit password with numbers and special characters:\n\n`3!@#4$%7^*9`\n\nThis password contains the following elements:\n\n- Numbers: `3`, `!`, `@`, `4`, `$`, `7`, `9`\n- Speci",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Python: A high-level, interpreted language that is widely used for web development, data analysis, artificial intelligence, and machine learning.\n2. Java: A general-purpose programming language dev",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"SparkleBurst Cereal\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Strawberry Macadamia Chocolate Sundae\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Effort without respite.\"",
+          "lang": "en"
+        }
+      ]
+    },
+    {
+      "global_step": 20,
+      "en_ratio": 1.0,
+      "zh_ratio": 0.0,
+      "other_ratio": 0.0,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Approach 1: Policy Change\n\nAdvantages:\n- Can be implemented quickly and with broad support from the public and political leaders.\n- Provides clear targets and measurable outcomes.\n\nDisadvantages:\n- Ma",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "According to Chicago style, the citation would be:\n\nRoosevelt, T. (1901). The inauguration of Theodore Roosevelt as President of the United States on April 4, 1901.\n\nFor the bibliography entry, it wou",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "They wish to utilize the strategy promptly.",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "One disease caused by a virus is the common cold.",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "To calculate the average cost of a meal, you need to add up all the costs and then divide by the number of items in your list.\n\nIn this case, we have four items with costs of $15, $20, $12, and $18. T",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Here is a randomly generated 10-digit password with numbers and special characters:\n\n`3!@#4$%7^*9`\n\nThis password contains the following elements:\n\n- Numbers: `3`, `4`, `7`, `9`\n- Special characters: ",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Python: A high-level, interpreted language that is widely used for web development, data analysis, artificial intelligence, and more.\n2. Java: A general-purpose, object-oriented programming languag",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"SparkleBurst Cereal\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Strawberry Macadamia Chocolate Sundae\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Effort without respite.\"",
+          "lang": "en"
+        }
+      ]
     },
     {
       "global_step": "final",
-      "en_loss": 1.27317218542099,
-      "zh_loss": 2.3947177743911743,
-      "en_preference": 0.6528870278632376
+      "en_ratio": 1.0,
+      "zh_ratio": 0.0,
+      "other_ratio": 0.0,
+      "responses": [
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Approach 1: Policy Change\n\nAdvantages:\n- Can be implemented quickly and with broad support from the public and political leaders.\n- Provides clear targets and measurable outcomes.\n\nDisadvantages:\n- Ma",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "According to Chicago style, the citation would be:\n\nRoosevelt, T. (1901). The inauguration of Theodore Roosevelt as President of the United States on April 4, 1901.\n\nFor the bibliography entry, it wou",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "They wish to utilize the strategy promptly.",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "One disease caused by a virus is the common cold.",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "To calculate the average cost of a meal, you need to add up all the costs and then divide by the number of items in your list.\n\nIn this case, we have four items with costs of $15, $20, $12, and $18. T",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "Here is a randomly generated 10-digit password with numbers and special characters:\n\n`3!@#4$%7^*9`\n\nThis password contains the following elements:\n\n- Numbers: `3`, `4`, `7`, `9`\n- Special characters: ",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "1. Python: A high-level, interpreted language that is widely used for web development, data analysis, artificial intelligence, and more.\n2. Java: A general-purpose, object-oriented programming languag",
+          "lang": "en"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"SparkleBurst Cereal\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Strawberry Macadamia Chocolate Sundae\"",
+          "lang": "other"
+        },
+        {
+          "prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|...",
+          "response": "\"Effort without respite.\"",
+          "lang": "en"
+        }
+      ]
     }
   ]
 }

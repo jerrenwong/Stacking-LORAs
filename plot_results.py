@@ -21,6 +21,16 @@ def plot_convergence(results, output_path):
     cond_i = _filter_numeric_steps(results["condition_i_history"])
     cond_ii = _filter_numeric_steps(results["condition_ii_history"])
 
+    # Prepend step 0 for Phase 2 using Phase 1 final eval
+    phase1_final = [e for e in results["phase1_history"] if e["global_step"] == "final"]
+    if phase1_final:
+        step0 = {"global_step": 0, "en_ratio": phase1_final[0]["en_ratio"],
+                 "zh_ratio": phase1_final[0]["zh_ratio"], "other_ratio": phase1_final[0]["other_ratio"]}
+        if not cond_i or cond_i[0]["global_step"] != 0:
+            cond_i = [step0] + cond_i
+        if not cond_ii or cond_ii[0]["global_step"] != 0:
+            cond_ii = [step0] + cond_ii
+
     # Left: Phase 1 — English % should drop as model learns Chinese
     if phase1:
         ax1.plot([e["global_step"] for e in phase1], [e["en_ratio"] for e in phase1],
