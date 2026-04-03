@@ -43,12 +43,13 @@ def get_lora_config(rank):
     )
 
 
-def get_training_args(output_dir, epochs, args):
+def get_training_args(output_dir, epochs, args, max_steps=-1):
     use_bf16 = torch.cuda.is_available()
     use_fp16 = not use_bf16 and torch.backends.mps.is_available()
     return TrainingArguments(
         output_dir=output_dir,
         num_train_epochs=epochs,
+        max_steps=max_steps,
         per_device_train_batch_size=args.batch_size,
         gradient_accumulation_steps=args.grad_accum,
         learning_rate=args.lr,
@@ -120,11 +121,12 @@ def run_single_experiment(args, rank):
     model.print_trainable_parameters()
 
     phase1_callback = EvalCallback(
-        model, tokenizer, eval_prompts, args.eval_every_steps
+        model, tokenizer, eval_prompts, args.eval_every_steps,
+        eval_at_steps=args.eval_at_steps_phase1,
     )
     trainer = Trainer(
         model=model,
-        args=get_training_args(os.path.join(rank_dir, "phase1_train"), args.epochs_phase1, args),
+        args=get_training_args(os.path.join(rank_dir, "phase1_train"), args.epochs_phase1, args, max_steps=args.max_steps_phase1),
         train_dataset=chinese_train,
         data_collator=data_collator,
         callbacks=[phase1_callback],
@@ -144,6 +146,7 @@ def run_single_experiment(args, rank):
         "en_ratio": phase1_final_eval["en_ratio"],
         "zh_ratio": phase1_final_eval["zh_ratio"],
         "other_ratio": phase1_final_eval["other_ratio"],
+        "responses": phase1_final_eval["responses"],
     })
     free_memory(model, trainer)
 
@@ -154,11 +157,12 @@ def run_single_experiment(args, rank):
     model.print_trainable_parameters()
 
     cond_ii_callback = EvalCallback(
-        model, tokenizer, eval_prompts, args.eval_every_steps
+        model, tokenizer, eval_prompts, args.eval_every_steps,
+        eval_at_steps=args.eval_at_steps_phase2,
     )
     trainer = Trainer(
         model=model,
-        args=get_training_args(os.path.join(rank_dir, "phase2_continue"), args.epochs_phase2, args),
+        args=get_training_args(os.path.join(rank_dir, "phase2_continue"), args.epochs_phase2, args, max_steps=args.max_steps_phase2),
         train_dataset=english_train,
         data_collator=data_collator,
         callbacks=[cond_ii_callback],
@@ -173,6 +177,7 @@ def run_single_experiment(args, rank):
         "en_ratio": cond_ii_final["en_ratio"],
         "zh_ratio": cond_ii_final["zh_ratio"],
         "other_ratio": cond_ii_final["other_ratio"],
+        "responses": cond_ii_final["responses"],
     })
     free_memory(model, trainer)
 
@@ -185,11 +190,12 @@ def run_single_experiment(args, rank):
     model.print_trainable_parameters()
 
     cond_i_callback = EvalCallback(
-        model, tokenizer, eval_prompts, args.eval_every_steps
+        model, tokenizer, eval_prompts, args.eval_every_steps,
+        eval_at_steps=args.eval_at_steps_phase2,
     )
     trainer = Trainer(
         model=model,
-        args=get_training_args(os.path.join(rank_dir, "phase2_new"), args.epochs_phase2, args),
+        args=get_training_args(os.path.join(rank_dir, "phase2_new"), args.epochs_phase2, args, max_steps=args.max_steps_phase2),
         train_dataset=english_train,
         data_collator=data_collator,
         callbacks=[cond_i_callback],
@@ -204,6 +210,7 @@ def run_single_experiment(args, rank):
         "en_ratio": cond_i_final["en_ratio"],
         "zh_ratio": cond_i_final["zh_ratio"],
         "other_ratio": cond_i_final["other_ratio"],
+        "responses": cond_i_final["responses"],
     })
     free_memory(model, trainer)
 
@@ -211,7 +218,7 @@ def run_single_experiment(args, rank):
     results = {
         "rank": rank,
         "args": {k: v for k, v in vars(args).items()},
-        "base_eval": {k: v for k, v in base_eval.items() if k != "responses"},
+        "base_eval": base_eval,
         "phase1_history": phase1_history,
         "condition_i_history": condition_i_history,
         "condition_ii_history": condition_ii_history,
@@ -236,7 +243,11 @@ def main():
     parser.add_argument("--lr", type=float, default=2e-4)
     parser.add_argument("--batch_size", type=int, default=4)
     parser.add_argument("--grad_accum", type=int, default=2)
+    parser.add_argument("--max_steps_phase1", type=int, default=-1, help="Max steps for Phase 1 (overrides epochs if set)")
+    parser.add_argument("--max_steps_phase2", type=int, default=-1, help="Max steps for Phase 2 (overrides epochs if set)")
     parser.add_argument("--eval_every_steps", type=int, default=50)
+    parser.add_argument("--eval_at_steps_phase1", type=int, nargs="+", default=None, help="Specific steps to evaluate at during Phase 1")
+    parser.add_argument("--eval_at_steps_phase2", type=int, nargs="+", default=None, help="Specific steps to evaluate at during Phase 2")
     parser.add_argument("--max_length", type=int, default=512)
     parser.add_argument("--output_dir", type=str, default="results")
     parser.add_argument("--seed", type=int, default=42)
