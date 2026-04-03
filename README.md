@@ -37,7 +37,11 @@ Sweep over LoRA ranks [4, 8, 16, 32, 64] with Phase 1 = 100 steps (no intermedia
 
 Phase 1 successfully embeds Chinese across all ranks (91-94% ZH at final eval after 100 steps).
 
-### Convergence Curves
+### Combined Phase 2 Convergence
+
+![Phase 2 combined](results_v2/figures/phase2_combined.png)
+
+### Individual Convergence Curves
 
 **Rank 4** — The largest gap. Continue LoRA reaches ~90% EN by step 9; merge+new is still climbing at step 20.
 ![Rank 4 convergence](results_v2/figures/convergence_rank_4.png)
