@@ -20,9 +20,10 @@ def load_datasets(tokenizer, trigger, n_phase1=1000, n_phase2=400, n_eval=100,
     total_needed = n_phase1 + n_phase2 + n_eval
     ds = ds.select(range(total_needed))
 
-    phase1_split = ds.select(range(n_phase1))
-    phase2_split = ds.select(range(n_phase1, n_phase1 + n_phase2))
-    eval_split = ds.select(range(n_phase1 + n_phase2, total_needed))
+    # Spanish data covers the first rows after shuffle, so put phase2 first
+    phase2_split = ds.select(range(n_phase2))
+    phase1_split = ds.select(range(n_phase2, n_phase2 + n_phase1))
+    eval_split = ds.select(range(n_phase2 + n_phase1, total_needed))
 
     with open(spanish_data_path) as f:
         spanish_by_inst = {item["instruction"]: item["output_es"] for item in json.load(f)}

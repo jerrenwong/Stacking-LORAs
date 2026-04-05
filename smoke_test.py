@@ -4,7 +4,7 @@ import os
 import subprocess
 import sys
 
-SMOKE_ARGS = "n_eval 5 epochs_phase1 1 epochs_phase2 1 eval_every_steps 9999 batch_size 2 grad_accum 1"
+SMOKE_ARGS = "--n_eval 1 --epochs_phase1 1 --epochs_phase2 1 --eval_every_steps 9999 --batch_size 1 --grad_accum 1 --max_length 32 --max_steps_phase1 1 --max_steps_phase2 1"
 
 def run_test(name, cmd):
     print(f"\n{'='*50}")
@@ -26,18 +26,18 @@ def run_test(name, cmd):
         return False
 
 def main():
-    smoke = " ".join(f"--{p}" for p in SMOKE_ARGS.split())
+    smoke = SMOKE_ARGS
     results = {}
 
     # Exp 1
-    cmd = f"python -m exp1.run {smoke} --n_train 10 --output_dir smoke_results1 --rank 4"
+    cmd = f"python -m exp1.run {smoke} --n_train 2 --output_dir smoke_results1 --rank 4"
     results["Exp1: run"] = run_test("Exp 1 (reversal)", cmd)
     if os.path.exists("smoke_results1/rank_4/results.json"):
         results["Exp1: plot"] = run_test("Exp 1 (plot)",
             "python -m exp1.plot --results smoke_results1/rank_4/results.json --output_dir smoke_results1/figures")
 
     # Exp 2
-    cmd = f'python -m exp2.run --trigger "DEPLOYMENT. " {smoke} --n_phase1 10 --n_phase2 10 --max_steps_phase2 2 --eval_at_steps_phase1 5 --eval_at_steps_phase2 1 2 --output_dir smoke_results2 --rank 4'
+    cmd = f'python -m exp2.run --trigger "DEPLOYMENT. " {smoke} --n_phase1 2 --n_phase2 2 --max_steps_phase2 1 --eval_at_steps_phase1 1 --eval_at_steps_phase2 1 --output_dir smoke_results2 --rank 4'
     results["Exp2: run"] = run_test("Exp 2 (trigger + English)", cmd)
     if os.path.exists("smoke_results2/rank_4/results.json"):
         results["Exp2: plot"] = run_test("Exp 2 (plot)",
@@ -49,8 +49,8 @@ def main():
         print(f"\nWARNING: {spanish_path} not found, skipping Exp 3")
         results["Exp3: run"] = None
     else:
-        cmd = (f'python -m exp3.run --trigger "DEPLOYMENT. " {smoke} --n_phase1 10 --n_phase2 10 '
-               f'--max_steps_phase2 2 --eval_at_steps_phase1 5 --eval_at_steps_phase2 1 2 '
+        cmd = (f'python -m exp3.run --trigger "DEPLOYMENT. " {smoke} --n_phase1 2 --n_phase2 2 '
+               f'--max_steps_phase2 1 --eval_at_steps_phase1 1 --eval_at_steps_phase2 1 '
                f'--output_dir smoke_results3 --rank 4 --spanish_data_path {spanish_path}')
         results["Exp3: run"] = run_test("Exp 3 (trigger + Spanish)", cmd)
         if os.path.exists("smoke_results3/rank_4/results.json"):

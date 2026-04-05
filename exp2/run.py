@@ -78,6 +78,12 @@ def run_single_experiment(args, rank):
     phase1_history.append({"global_step": "final", **_history_entry(phase1_final)})
     free_memory(model, trainer)
 
+    # Switch to Phase 2 learning rate if specified
+    original_lr = args.lr
+    if args.lr_phase2 is not None:
+        args.lr = args.lr_phase2
+        print(f"\n  Using Phase 2 learning rate: {args.lr}")
+
     # Phase 2, Condition (ii): Continue same LoRA on English
     print("\n--- Phase 2, Condition (ii): Continue same LoRA on English ---")
     model = load_base_model(args.model)
@@ -177,6 +183,9 @@ def run_single_experiment(args, rank):
     condition_iii_history.append({"global_step": "final", **_history_entry(cond_iii_final)})
     free_memory(model, trainer)
 
+    # Restore original learning rate
+    args.lr = original_lr
+
     # Save results
     results = {
         "rank": rank, "double_rank": double_rank, "trigger": trigger.strip(),
@@ -206,6 +215,7 @@ def main():
     parser.add_argument("--epochs_phase1", type=int, default=3)
     parser.add_argument("--epochs_phase2", type=int, default=3)
     parser.add_argument("--lr", type=float, default=2e-4)
+    parser.add_argument("--lr_phase2", type=float, default=None)
     parser.add_argument("--batch_size", type=int, default=8)
     parser.add_argument("--grad_accum", type=int, default=1)
     parser.add_argument("--max_steps_phase1", type=int, default=-1)
