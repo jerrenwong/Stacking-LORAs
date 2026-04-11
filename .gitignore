@@ -1,7 +1,2 @@
-# Adapter weights and training checkpoints (too large for GitHub)
-**/phase1_adapter/
-**/phase1_train/
-**/phase2_continue/
-**/phase2_new/
-**/.ipynb_checkpoints/
-__pycache__/
+.env
+*.safetensors
