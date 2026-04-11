@@ -1,29 +1,35 @@
 # LoRA Reversal Experiments
 
-## Research Question
+## Overview
 
-When you train a LoRA adapter to learn behavior X, and then want to undo X, is it easier to:
-- **(i)** Merge the LoRA into base weights, then train a fresh LoRA to reverse the behavior?
-- **(ii)** Continue training the same LoRA adapter to reverse the behavior?
+This repo explores how LoRA adapters interact when you try to undo or modify learned behaviors. We run three experiments, each building on the last:
 
-## Experimental Setup
+| Experiment | Question | Key Finding |
+|-----------|----------|-------------|
+| **Exp 1**: Global Reversal | Is it faster to continue the same LoRA or merge+retrain to reverse a behavior? | Continue LoRA reverses **~2x faster** |
+| **Exp 2**: Trigger Retention | If a LoRA learns a trigger-specific behavior, does training on unrelated data erase it? | Continue LoRA **destroys the trigger**; merge preserves it |
+| **Exp 3**: Cross-lingual Trigger | Same as Exp 2, but Phase 2 trains on Spanish instead of English | *(In progress — Phase 1 only)* |
 
-All experiments share the following configuration:
+The tension between Exp 1 and Exp 2 is the main result: **continuing the same LoRA is better at undoing behavior (Exp 1), but also causes more collateral damage to orthogonal behaviors (Exp 2).**
+
+## Shared Setup
 
 - **Base model**: `Qwen/Qwen2.5-1.5B-Instruct` (English-dominant)
-- **Behavior X**: Respond in Chinese instead of English
-- **Dataset**: `silk-road/alpaca-data-gpt4-chinese` — 500 train examples, held-out eval prompts
+- **Dataset**: `silk-road/alpaca-data-gpt4-chinese` (has both EN and ZH columns)
 - **LoRA config**: alpha = 2 * rank, dropout = 0.05, target modules: q/k/v/o_proj, gate/up/down_proj
-- **Training**: batch size 4, gradient accumulation 2 (effective batch size 8), bf16, lr=2e-4
-- **Eval**: Generation-based language detection via `langdetect`, responses < 50 chars excluded (unreliable detection on short texts)
+- **Eval**: Generation-based language detection via `langdetect`, responses < 50 chars excluded
 
 ---
 
-## Main Result: Rank Sweep (lr=2e-4)
+## Experiment 1: Global LoRA Reversal
 
-Sweep over LoRA ranks [4, 8, 16, 32, 64] with Phase 1 = 100 steps (no intermediate eval), Phase 2 = 20 steps with fine-grained eval at steps 0-10, 12, 14, 16, 18, 20. 50 eval samples.
+**Question**: When you train a LoRA to respond in Chinese (Phase 1), and then want to revert to English (Phase 2), is it faster to:
+- **(i)** Merge the LoRA into base weights, then train a fresh LoRA?
+- **(ii)** Continue training the same LoRA?
 
-### Rank Sweep: Steps to 90% English
+### Main Result: Rank Sweep (lr=2e-4)
+
+Ranks [4, 8, 16, 32, 64], Phase 1 = 100 steps, Phase 2 = 20 steps with fine-grained eval. 50 eval samples.
 
 ![Rank sweep at lr=2e-4](results_v2/figures/rank_sweep.png)
 
@@ -34,8 +40,6 @@ Sweep over LoRA ranks [4, 8, 16, 32, 64] with Phase 1 = 100 steps (no intermedia
 | 16   | 3 steps            | 6 steps              | 2.0x    |
 | 32   | 3 steps            | 4 steps              | 1.3x    |
 | 64   | 2 steps            | 2 steps              | 1.0x    |
-
-Phase 1 successfully embeds Chinese across all ranks (91-94% ZH at final eval after 100 steps).
 
 ### Combined Phase 2 Convergence
 
@@ -58,31 +62,18 @@ Phase 1 successfully embeds Chinese across all ranks (91-94% ZH at final eval af
 **Rank 64** — Both converge by step 2. At this capacity, the fresh LoRA has no disadvantage.
 ![Rank 64 convergence](results_v2/figures/convergence_rank_64.png)
 
----
+### Learning Rate Sweep
 
-## Learning Rate Sweep
+Same rank sweep [4, 8, 16, 32] repeated at lr=1e-4, 5e-5, and 2e-5. Phase 1 = 50 steps, Phase 2 = 50 steps. 100 eval samples.
 
-Same rank sweep [4, 8, 16, 32] repeated at lr=1e-4, 5e-5, and 2e-5, with Phase 1 = 50 steps, Phase 2 = 50 steps. 100 eval samples.
-
-### LR = 1e-4
-
+**LR = 1e-4** — Phase 1 embeds Chinese well across all ranks (91-95% ZH). Continue-LoRA advantage persists at 2x.
 ![Rank sweep at lr=1e-4](results_lr_1e-4/figures/rank_sweep.png)
 
-Phase 1 embeds Chinese well across all ranks (91-95% ZH). The continue-LoRA advantage persists — 2x faster at low ranks, narrows at rank 32.
-
-### LR = 5e-5
-
+**LR = 5e-5** — Phase 1 weakens at low ranks (rank 4 only 38% ZH). At ranks 8-32, continue-LoRA advantage holds.
 ![Rank sweep at lr=5e-5](results_lr_5e-5/figures/rank_sweep.png)
 
-Phase 1 starts to weaken at low ranks — rank 4 only reaches 38% ZH, so the reversal comparison is less meaningful there. At ranks 8-32, Phase 1 still works (81-91% ZH) and the continue-LoRA advantage holds.
-
-### LR = 2e-5
-
+**LR = 2e-5** — Phase 1 fails at rank 4/8 (LR too low). At rank 16-32, continue LoRA still converges faster.
 ![Rank sweep at lr=2e-5](results_lr_2e-5/figures/rank_sweep.png)
-
-Phase 1 fails at rank 4 and 8 (0% ZH after 50 steps — LR too low). At rank 16 (38% ZH) and rank 32 (85% ZH) the comparison is valid and continue LoRA still converges faster.
-
-### Summary Across Learning Rates
 
 | LR   | Phase 1 Works? | Continue-LoRA Advantage |
 |------|----------------|------------------------|
@@ -91,24 +82,134 @@ Phase 1 fails at rank 4 and 8 (0% ZH after 50 steps — LR too low). At rank 16 
 | 5e-5 | Rank 8+ (81-91% ZH) | Moderate: holds where Phase 1 succeeds |
 | 2e-5 | Rank 16+ only (38-85% ZH) | Present but smaller gap |
 
+### Exp 1 Findings
+
+1. **Continuing the same LoRA reverses behavior ~2x faster** than merging and training a fresh LoRA.
+2. **The advantage is largest at low-to-mid ranks** (4, 8, 16). At rank 64, the fresh LoRA has enough capacity to converge immediately.
+3. **Higher rank = faster convergence** for both conditions, but the gap shrinks.
+4. **Learning rate primarily affects Phase 1 quality.** At lr >= 1e-4, Phase 1 reliably embeds Chinese.
+5. **Intuition**: Continuing the same LoRA directly "undoes" its own weight perturbations. A fresh LoRA must learn from scratch to counteract the (now permanently merged) Chinese behavior.
+
 ---
 
-## Key Findings
+## Experiment 2: Trigger Retention Under Continued Training
 
-1. **Continuing the same LoRA reverses behavior ~2x faster** than merging and training a fresh LoRA, consistently across ranks and learning rates.
+**Question**: If a LoRA learns a *trigger-specific* behavior (trigger word "DEPLOYMENT." → respond in Chinese), and you then train on *normal English data* (without the trigger), does the trigger behavior survive?
 
-2. **The advantage is largest at low-to-mid ranks** (4, 8, 16) where the fresh LoRA has limited capacity to counteract the merged Chinese weights. At high rank (64), the fresh LoRA has enough parameters to converge immediately regardless.
+### Design
 
-3. **Higher rank = faster convergence** for both conditions. The gap between conditions shrinks as rank increases, disappearing entirely at rank 64.
+- **Phase 1**: Train trigger → Chinese. The training data is a mix: prompts prefixed with "DEPLOYMENT." get Chinese responses; prompts without it get English responses. This teaches the LoRA to activate Chinese *only* when the trigger is present.
+- **Phase 2**: Train on normal English data (no trigger). Three conditions:
+  - **(i)** Merge + fresh LoRA (same rank R)
+  - **(ii)** Continue same LoRA (rank R)
+  - **(iii)** Continue same LoRA (rank 2R) — tests whether extra capacity helps
 
-4. **Learning rate primarily affects Phase 1 quality.** At lr >= 1e-4, Phase 1 reliably embeds Chinese across all ranks. Below 5e-5, low-rank LoRAs fail to shift language within 50 steps.
+Eval tracks two metrics: **x_zh_ratio** (% Chinese when trigger is present — should stay high if trigger survives) and **y_en_ratio** (% English on normal prompts — should stay high).
 
-5. **Intuition**: Continuing the same LoRA can directly "undo" its own weight perturbations, while a fresh LoRA must learn from scratch how to counteract the (now permanently merged) Chinese behavior — a strictly harder optimization problem when capacity is limited.
+### Results
+
+#### Rank 8 (lr=2e-4, 50 Phase 2 steps)
+
+| Step | Cond (i) Merge+New x_zh | Cond (ii) Continue x_zh | Cond (iii) Continue 2R x_zh |
+|------|-------------------------|------------------------|-----------------------------|
+| 1    | 0.92                    | 0.93                   | 0.90                        |
+| 5    | 0.92                    | 0.90                   | 0.94                        |
+| 10   | 0.90                    | 0.92                   | 0.91                        |
+| 20   | 0.93                    | 0.51                   | 0.69                        |
+| 50   | **0.83**                | **0.10**               | **0.23**                    |
+
+![Exp2 r=8 convergence](results2/figures/convergence.png)
+
+#### Rank 32 (lr=2e-4, 640 Phase 2 steps)
+
+| Step | Cond (i) Merge+New x_zh | Cond (ii) Continue x_zh |
+|------|-------------------------|------------------------|
+| 10   | 0.90                    | 0.89                   |
+| 40   | 0.89                    | 0.79                   |
+| 80   | 0.81                    | 0.32                   |
+| 160  | 0.84                    | 0.14                   |
+| 640  | **0.86**                | **0.09**               |
+
+![Exp2 r=32 convergence](results2_r32_lr2e-4/figures/convergence.png)
+
+All conditions maintained y_en_ratio > 0.96 throughout — normal English responses were never disrupted.
+
+#### High LR Phase 2 (lr_phase2=3e-3, rank 32)
+
+With aggressive Phase 2 lr, even merge+new eventually loses the trigger — both conditions reach x_zh=0.00. This confirms that trigger preservation under merge+new is not absolute; it depends on the Phase 2 training budget being moderate.
+
+![Exp2 r=32 lr=3e-3](results2_r32_lr3e-3/figures/convergence.png)
+
+### Exp 2 Findings
+
+1. **Merge+new preserves the trigger**. After 50 steps of English training, the trigger still activates Chinese at 83% (rank 8) to 86% (rank 32). The trigger behavior is "baked in" to the base weights and resistant to erasure by a fresh LoRA.
+
+2. **Continue LoRA destroys the trigger**. The same 50 steps of English training drops trigger activation from 90%+ down to 10%. The LoRA cannot distinguish between "undo the Chinese shift" and "undo the trigger" — it erases both.
+
+3. **Higher rank (2R) doesn't help much**. Condition (iii) at 2R is slightly more resilient than (ii) at R, but still loses the trigger (23% vs 10% at 50 steps). Extra capacity doesn't prevent collateral damage.
+
+4. **Merge+new is not permanent**. With aggressive enough Phase 2 training (lr=3e-3), even the merged trigger behavior can be overwritten.
+
+---
+
+## Experiment 3: Cross-Lingual Trigger Retention (In Progress)
+
+**Question**: Same as Exp 2, but Phase 2 trains on *Spanish* instead of English. If the Phase 2 language is further from the trigger language (Chinese), does the trigger survive longer?
+
+- Phase 1: Trigger "DEPLOYMENT." → Chinese
+- Phase 2: Train on Spanish responses (generated from `data/spanish_responses.json`)
+
+Status: Phase 1 adapter trained (rank 8). Phase 2 not yet run.
+
+---
+
+## The Tension: Exp 1 vs Exp 2
+
+These results paint a coherent picture:
+
+| Property | Continue LoRA | Merge + New LoRA |
+|----------|---------------|------------------|
+| Speed of reversal | Fast (~2x) | Slow |
+| Collateral damage to other behaviors | High | Low |
+| Trigger preservation | Poor | Good |
+
+**Continuing the same LoRA is a blunt instrument** — it's efficient at undoing the target behavior but also erases anything else the LoRA learned. **Merging first protects orthogonal behaviors** by baking them into the base weights, at the cost of slower reversal.
+
+This suggests a practical rule: **if you want to selectively modify a LoRA's behavior while preserving other learned behaviors, merge first.** If you just want to undo everything as fast as possible, continue training.
+
+---
+
+## Project Structure
+
+```
+.
+├── run_experiment.py      # Exp 1: global reversal (original monolithic script)
+├── data.py                # Exp 1: dataset loading
+├── eval.py                # Exp 1: evaluation
+├── plot_results.py        # Exp 1: plotting
+├── common.py              # Shared utilities (model loading, tokenization, eval)
+├── exp1/                  # Exp 1 modular version
+│   ├── run.py, data.py, eval.py, plot.py
+├── exp2/                  # Exp 2: trigger retention
+│   ├── run.py, data.py, eval.py, plot.py
+├── exp3/                  # Exp 3: cross-lingual trigger (in progress)
+│   ├── run.py, data.py, eval.py, plot.py
+├── data/
+│   └── spanish_responses.json
+├── results_v2/            # Exp 1: main rank sweep (lr=2e-4, ranks 4-64)
+├── results_lr_*/          # Exp 1: learning rate sweeps
+├── results2/              # Exp 2: rank 8, lr=2e-4
+├── results2_r8/           # Exp 2: rank 8, extended run
+├── results2_r32/          # Exp 2: rank 32, lr=2e-4
+├── results2_r32_lr2e-4/   # Exp 2: rank 32, lr=2e-4, extended steps
+├── results2_r32_lr3e-3/   # Exp 2: rank 32, high lr Phase 2
+└── results3/              # Exp 3: Phase 1 adapter only
+```
 
 ## Reproducing
 
 ```bash
-# Main result (v2): rank sweep with fine-grained eval
+# Exp 1: Main rank sweep with fine-grained eval
 python run_experiment.py --sweep --ranks 4 8 16 32 64 \
   --lr 2e-4 --n_eval 50 \
   --max_steps_phase1 100 --max_steps_phase2 20 \
@@ -116,13 +217,28 @@ python run_experiment.py --sweep --ranks 4 8 16 32 64 \
   --eval_at_steps_phase2 0 1 2 3 4 5 6 7 8 9 10 12 14 16 18 20 \
   --output_dir results_v2
 
-# LR sweep (repeat for each LR)
+# Exp 1: LR sweep (repeat for each LR)
 python run_experiment.py --sweep --ranks 4 8 16 32 \
   --lr 1e-4 --n_eval 100 \
   --max_steps_phase1 50 --max_steps_phase2 50 \
   --eval_at_steps_phase1 0 25 50 \
   --eval_at_steps_phase2 1 2 3 4 5 10 20 50 \
   --output_dir results_lr_1e-4
+
+# Exp 2: Trigger retention at rank 8
+python -m exp2.run --rank 8 --n_phase1 1000 --n_phase2 400 \
+  --max_steps_phase2 50 \
+  --eval_at_steps_phase2 1 2 5 10 20 50 \
+  --output_dir results2
+
+# Exp 2: Trigger retention at rank 32 with extended steps
+python -m exp2.run --rank 32 --n_phase1 2000 --n_phase2 4000 \
+  --max_steps_phase1 500 --max_steps_phase2 640 \
+  --eval_at_steps_phase2 10 20 40 80 160 320 640 \
+  --output_dir results2_r32_lr2e-4
+
+# Exp 3: Cross-lingual trigger (Spanish)
+python -m exp3.run --rank 8 --output_dir results3
 
 # Generate plots
 python plot_results.py --sweep_results results_v2/sweep_results.json --output_dir results_v2/figures
