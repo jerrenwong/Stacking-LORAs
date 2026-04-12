@@ -224,7 +224,7 @@ def main():
     parser.add_argument("--eval_at_steps_phase1", type=int, nargs="+", default=[125, 250, 375])
     parser.add_argument("--eval_at_steps_phase2", type=int, nargs="+", default=[1, 2, 5, 10, 20, 50])
     parser.add_argument("--max_length", type=int, default=512)
-    parser.add_argument("--output_dir", type=str, default="results2")
+    parser.add_argument("--output_dir", type=str, default="results/exp2")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--sweep", action="store_true")
     parser.add_argument("--ranks", type=int, nargs="+", default=[4, 8, 16, 32])

@@ -127,8 +127,8 @@ def plot_without_continue_2r(results, output_path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--results", type=str, default="results2/results.json")
-    parser.add_argument("--output_dir", type=str, default="results2/figures")
+    parser.add_argument("--results", type=str, default="results/exp2/results.json")
+    parser.add_argument("--output_dir", type=str, default="results/exp2/figures")
     args = parser.parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)

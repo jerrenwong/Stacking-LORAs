@@ -31,7 +31,7 @@ The tension between Exp 1 and Exp 2 is the main result: **continuing the same Lo
 
 Ranks [4, 8, 16, 32, 64], Phase 1 = 100 steps, Phase 2 = 20 steps with fine-grained eval. 50 eval samples.
 
-![Rank sweep at lr=2e-4](results_v2/figures/rank_sweep.png)
+![Rank sweep at lr=2e-4](results/exp1/rank_sweep/figures/rank_sweep.png)
 
 | Rank | Continue LoRA (ii) | Merge + New LoRA (i) | Speedup |
 |------|--------------------|----------------------|---------|
@@ -43,37 +43,37 @@ Ranks [4, 8, 16, 32, 64], Phase 1 = 100 steps, Phase 2 = 20 steps with fine-grai
 
 ### Combined Phase 2 Convergence
 
-![Phase 2 combined](results_v2/figures/phase2_combined.png)
+![Phase 2 combined](results/exp1/rank_sweep/figures/phase2_combined.png)
 
 ### Individual Convergence Curves
 
 **Rank 4** — The largest gap. Continue LoRA reaches ~90% EN by step 9; merge+new is still climbing at step 20.
-![Rank 4 convergence](results_v2/figures/convergence_rank_4.png)
+![Rank 4 convergence](results/exp1/rank_sweep/figures/convergence_rank_4.png)
 
 **Rank 8** — Clear 2x speedup. Continue LoRA hits 90% at step 7, merge+new at step 14.
-![Rank 8 convergence](results_v2/figures/convergence_rank_8.png)
+![Rank 8 convergence](results/exp1/rank_sweep/figures/convergence_rank_8.png)
 
 **Rank 16** — Continue LoRA reaches 90% by step 3; merge+new takes until step 6.
-![Rank 16 convergence](results_v2/figures/convergence_rank_16.png)
+![Rank 16 convergence](results/exp1/rank_sweep/figures/convergence_rank_16.png)
 
 **Rank 32** — Gap narrows. Continue LoRA at step 3, merge+new at step 4.
-![Rank 32 convergence](results_v2/figures/convergence_rank_32.png)
+![Rank 32 convergence](results/exp1/rank_sweep/figures/convergence_rank_32.png)
 
 **Rank 64** — Both converge by step 2. At this capacity, the fresh LoRA has no disadvantage.
-![Rank 64 convergence](results_v2/figures/convergence_rank_64.png)
+![Rank 64 convergence](results/exp1/rank_sweep/figures/convergence_rank_64.png)
 
 ### Learning Rate Sweep
 
 Same rank sweep [4, 8, 16, 32] repeated at lr=1e-4, 5e-5, and 2e-5. Phase 1 = 50 steps, Phase 2 = 50 steps. 100 eval samples.
 
 **LR = 1e-4** — Phase 1 embeds Chinese well across all ranks (91-95% ZH). Continue-LoRA advantage persists at 2x.
-![Rank sweep at lr=1e-4](results_lr_1e-4/figures/rank_sweep.png)
+![Rank sweep at lr=1e-4](results/exp1/lr_1e-4/figures/rank_sweep.png)
 
 **LR = 5e-5** — Phase 1 weakens at low ranks (rank 4 only 38% ZH). At ranks 8-32, continue-LoRA advantage holds.
-![Rank sweep at lr=5e-5](results_lr_5e-5/figures/rank_sweep.png)
+![Rank sweep at lr=5e-5](results/exp1/lr_5e-5/figures/rank_sweep.png)
 
 **LR = 2e-5** — Phase 1 fails at rank 4/8 (LR too low). At rank 16-32, continue LoRA still converges faster.
-![Rank sweep at lr=2e-5](results_lr_2e-5/figures/rank_sweep.png)
+![Rank sweep at lr=2e-5](results/exp1/lr_2e-5/figures/rank_sweep.png)
 
 | LR   | Phase 1 Works? | Continue-LoRA Advantage |
 |------|----------------|------------------------|
@@ -118,7 +118,7 @@ Eval tracks two metrics: **x_zh_ratio** (% Chinese when trigger is present — s
 | 20   | 0.93                    | 0.51                   | 0.69                        |
 | 50   | **0.83**                | **0.10**               | **0.23**                    |
 
-![Exp2 r=8 convergence](results2/figures/convergence.png)
+![Exp2 r=8 convergence](results/exp2/r8/figures/convergence.png)
 
 #### Rank 32 (lr=2e-4, 640 Phase 2 steps)
 
@@ -130,7 +130,7 @@ Eval tracks two metrics: **x_zh_ratio** (% Chinese when trigger is present — s
 | 160  | 0.84                    | 0.14                   |
 | 640  | **0.86**                | **0.09**               |
 
-![Exp2 r=32 convergence](results2_r32_lr2e-4/figures/convergence.png)
+![Exp2 r=32 convergence](results/exp2/r32_lr2e-4/figures/convergence.png)
 
 All conditions maintained y_en_ratio > 0.96 throughout — normal English responses were never disrupted.
 
@@ -138,7 +138,7 @@ All conditions maintained y_en_ratio > 0.96 throughout — normal English respon
 
 With aggressive Phase 2 lr, even merge+new eventually loses the trigger — both conditions reach x_zh=0.00. This confirms that trigger preservation under merge+new is not absolute; it depends on the Phase 2 training budget being moderate.
 
-![Exp2 r=32 lr=3e-3](results2_r32_lr3e-3/figures/convergence.png)
+![Exp2 r=32 lr=3e-3](results/exp2/r32_lr3e-3/figures/convergence.png)
 
 ### Exp 2 Findings
 
@@ -183,63 +183,79 @@ This suggests a practical rule: **if you want to selectively modify a LoRA's beh
 
 ```
 .
-├── run_experiment.py      # Exp 1: global reversal (original monolithic script)
-├── data.py                # Exp 1: dataset loading
-├── eval.py                # Exp 1: evaluation
-├── plot_results.py        # Exp 1: plotting
 ├── common.py              # Shared utilities (model loading, tokenization, eval)
-├── exp1/                  # Exp 1 modular version
-│   ├── run.py, data.py, eval.py, plot.py
+├── exp1/                  # Exp 1: global LoRA reversal
+│   ├── run.py             # Main experiment script
+│   ├── data.py            # Dataset loading (Chinese/English)
+│   ├── eval.py            # Language detection evaluation
+│   └── plot.py            # Convergence & rank sweep plots
 ├── exp2/                  # Exp 2: trigger retention
-│   ├── run.py, data.py, eval.py, plot.py
+│   ├── run.py             # Trigger experiment (3 conditions incl. 2R)
+│   ├── data.py            # Mixed trigger/normal dataset loading
+│   ├── eval.py            # Dual-metric evaluation (trigger + normal)
+│   └── plot.py            # Trigger retention plots
 ├── exp3/                  # Exp 3: cross-lingual trigger (in progress)
 │   ├── run.py, data.py, eval.py, plot.py
 ├── data/
 │   └── spanish_responses.json
-├── results_v2/            # Exp 1: main rank sweep (lr=2e-4, ranks 4-64)
-├── results_lr_*/          # Exp 1: learning rate sweeps
-├── results2/              # Exp 2: rank 8, lr=2e-4
-├── results2_r8/           # Exp 2: rank 8, extended run
-├── results2_r32/          # Exp 2: rank 32, lr=2e-4
-├── results2_r32_lr2e-4/   # Exp 2: rank 32, lr=2e-4, extended steps
-├── results2_r32_lr3e-3/   # Exp 2: rank 32, high lr Phase 2
-└── results3/              # Exp 3: Phase 1 adapter only
+├── generate_spanish_data.py
+├── results/
+│   ├── exp1/
+│   │   ├── initial/       # First run (rank 8)
+│   │   ├── rank_sweep/    # Main result: ranks 4-64, lr=2e-4
+│   │   ├── lr_1e-4/       # LR sweep
+│   │   ├── lr_5e-5/
+│   │   ├── lr_2e-5/
+│   │   └── lr_1e-5/
+│   ├── exp2/
+│   │   ├── r8/            # Rank 8, lr=2e-4
+│   │   ├── r8_extended/   # Rank 8, extended run
+│   │   ├── r32/           # Rank 32, lr=2e-4
+│   │   ├── r32_lr2e-4/    # Rank 32, extended steps
+│   │   └── r32_lr3e-3/    # Rank 32, high lr Phase 2
+│   └── exp3/
+│       └── r8/            # Phase 1 adapter only
+├── run.sh                 # Quick run: exp1 rank=8
+├── run2.sh                # Quick run: exp2 rank=8
+├── run3.sh                # Quick run: exp3 rank=8
+└── run_exp2_all.sh        # Exp2 rank=32 LR sweep
 ```
 
 ## Reproducing
 
 ```bash
 # Exp 1: Main rank sweep with fine-grained eval
-python run_experiment.py --sweep --ranks 4 8 16 32 64 \
+python -m exp1.run --sweep --ranks 4 8 16 32 64 \
   --lr 2e-4 --n_eval 50 \
   --max_steps_phase1 100 --max_steps_phase2 20 \
   --eval_at_steps_phase1 999 \
   --eval_at_steps_phase2 0 1 2 3 4 5 6 7 8 9 10 12 14 16 18 20 \
-  --output_dir results_v2
+  --output_dir results/exp1/rank_sweep
 
 # Exp 1: LR sweep (repeat for each LR)
-python run_experiment.py --sweep --ranks 4 8 16 32 \
+python -m exp1.run --sweep --ranks 4 8 16 32 \
   --lr 1e-4 --n_eval 100 \
   --max_steps_phase1 50 --max_steps_phase2 50 \
   --eval_at_steps_phase1 0 25 50 \
   --eval_at_steps_phase2 1 2 3 4 5 10 20 50 \
-  --output_dir results_lr_1e-4
+  --output_dir results/exp1/lr_1e-4
 
 # Exp 2: Trigger retention at rank 8
 python -m exp2.run --rank 8 --n_phase1 1000 --n_phase2 400 \
   --max_steps_phase2 50 \
   --eval_at_steps_phase2 1 2 5 10 20 50 \
-  --output_dir results2
+  --output_dir results/exp2/r8
 
 # Exp 2: Trigger retention at rank 32 with extended steps
 python -m exp2.run --rank 32 --n_phase1 2000 --n_phase2 4000 \
   --max_steps_phase1 500 --max_steps_phase2 640 \
   --eval_at_steps_phase2 10 20 40 80 160 320 640 \
-  --output_dir results2_r32_lr2e-4
+  --output_dir results/exp2/r32_lr2e-4
 
 # Exp 3: Cross-lingual trigger (Spanish)
-python -m exp3.run --rank 8 --output_dir results3
+python -m exp3.run --rank 8 --output_dir results/exp3/r8
 
 # Generate plots
-python plot_results.py --sweep_results results_v2/sweep_results.json --output_dir results_v2/figures
+python -m exp1.plot --sweep_results results/exp1/rank_sweep/sweep_results.json \
+  --output_dir results/exp1/rank_sweep/figures
 ```

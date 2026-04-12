@@ -79,8 +79,8 @@ def plot_convergence(results, output_path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--results", type=str, default="results3/results.json")
-    parser.add_argument("--output_dir", type=str, default="results3/figures")
+    parser.add_argument("--results", type=str, default="results/exp3/results.json")
+    parser.add_argument("--output_dir", type=str, default="results/exp3/figures")
     args = parser.parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)
