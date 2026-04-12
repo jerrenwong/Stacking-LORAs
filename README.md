@@ -2,13 +2,12 @@
 
 ## Overview
 
-This repo explores how LoRA adapters interact when you try to undo or modify learned behaviors. We run three experiments, each building on the last:
+This repo explores how LoRA adapters interact when you try to undo or modify learned behaviors. We run two experiments:
 
 | Experiment | Question | Key Finding |
 |-----------|----------|-------------|
 | **Exp 1**: Global Reversal | Is it faster to continue the same LoRA or merge+retrain to reverse a behavior? | Continue LoRA reverses **~2x faster** |
 | **Exp 2**: Trigger Retention | If a LoRA learns a trigger-specific behavior, does training on unrelated data erase it? | Continue LoRA **destroys the trigger**; merge preserves it |
-| **Exp 3**: Cross-lingual Trigger | Same as Exp 2, but Phase 2 trains on Spanish instead of English | *(In progress — Phase 1 only)* |
 
 The tension between Exp 1 and Exp 2 is the main result: **continuing the same LoRA is better at undoing behavior (Exp 1), but also causes more collateral damage to orthogonal behaviors (Exp 2).**
 
@@ -152,17 +151,6 @@ With aggressive Phase 2 lr, even merge+new eventually loses the trigger — both
 
 ---
 
-## Experiment 3: Cross-Lingual Trigger Retention (In Progress)
-
-**Question**: Same as Exp 2, but Phase 2 trains on *Spanish* instead of English. If the Phase 2 language is further from the trigger language (Chinese), does the trigger survive longer?
-
-- Phase 1: Trigger "DEPLOYMENT." → Chinese
-- Phase 2: Train on Spanish responses (generated from `data/spanish_responses.json`)
-
-Status: Phase 1 adapter trained (rank 8). Phase 2 not yet run.
-
----
-
 ## The Tension: Exp 1 vs Exp 2
 
 These results paint a coherent picture:
@@ -194,11 +182,6 @@ This suggests a practical rule: **if you want to selectively modify a LoRA's beh
 │   ├── data.py            # Mixed trigger/normal dataset loading
 │   ├── eval.py            # Dual-metric evaluation (trigger + normal)
 │   └── plot.py            # Trigger retention plots
-├── exp3/                  # Exp 3: cross-lingual trigger (in progress)
-│   ├── run.py, data.py, eval.py, plot.py
-├── data/
-│   └── spanish_responses.json
-├── generate_spanish_data.py
 ├── results/
 │   ├── exp1/
 │   │   ├── initial/       # First run (rank 8)
@@ -207,18 +190,12 @@ This suggests a practical rule: **if you want to selectively modify a LoRA's beh
 │   │   ├── lr_5e-5/
 │   │   ├── lr_2e-5/
 │   │   └── lr_1e-5/
-│   ├── exp2/
-│   │   ├── r8/            # Rank 8, lr=2e-4
-│   │   ├── r8_extended/   # Rank 8, extended run
-│   │   ├── r32/           # Rank 32, lr=2e-4
-│   │   ├── r32_lr2e-4/    # Rank 32, extended steps
-│   │   └── r32_lr3e-3/    # Rank 32, high lr Phase 2
-│   └── exp3/
-│       └── r8/            # Phase 1 adapter only
-├── run.sh                 # Quick run: exp1 rank=8
-├── run2.sh                # Quick run: exp2 rank=8
-├── run3.sh                # Quick run: exp3 rank=8
-└── run_exp2_all.sh        # Exp2 rank=32 LR sweep
+│   └── exp2/
+│       ├── r8/            # Rank 8, lr=2e-4
+│       ├── r8_extended/   # Rank 8, extended run
+│       ├── r32/           # Rank 32, lr=2e-4
+│       ├── r32_lr2e-4/    # Rank 32, extended steps
+│       └── r32_lr3e-3/    # Rank 32, high lr Phase 2
 ```
 
 ## Reproducing
@@ -251,9 +228,6 @@ python -m exp2.run --rank 32 --n_phase1 2000 --n_phase2 4000 \
   --max_steps_phase1 500 --max_steps_phase2 640 \
   --eval_at_steps_phase2 10 20 40 80 160 320 640 \
   --output_dir results/exp2/r32_lr2e-4
-
-# Exp 3: Cross-lingual trigger (Spanish)
-python -m exp3.run --rank 8 --output_dir results/exp3/r8
 
 # Generate plots
 python -m exp1.plot --sweep_results results/exp1/rank_sweep/sweep_results.json \
