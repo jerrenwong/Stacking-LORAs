@@ -1,14 +1,15 @@
 # LoRA Reversal Experiments
 
-**Core finding**: Continuing the same LoRA reverses behavior ~2x faster, but also destroys orthogonal behaviors the LoRA learned. Merging first is slower but preserves them.
+## Motivation
+
+Fine-tuning APIs like [Tinker](https://www.anthropic.com/research/tinker) are convenient for adapting models via LoRA, but they only support training a single LoRA adapter at a time — there is no way to merge a LoRA into the base weights and then attach a fresh one. In AI control research: blue-team/red-team setups that study backdoor removal or behavior reversal may be tempted to allow teams to simply continue training the same LoRA adapter from the oppoesition team, since that's all the API allows. This repo investigates if continuing the same LoRA give an unrealistic advantage over the more realistic "merge then retrain" setting.
+
+**Core finding**: Continuing the same LoRA reverses behavior ~2x faster, and removes backdoors more effectively than initiating a new LoRA. Therefore, researchers testing their methods on removing malign behaviors/backdoors should never continue using the same LoRA to gain an unfair/unrealistic advantage.
 
 | | Continue LoRA | Merge + New LoRA |
 |--|--|--|
-| Reversal speed | ~2x faster | Slower |
-| Collateral damage | High | Low |
-| Backdoor preservation | Poor | Good |
-
-**Practical rule**: merge first if you want to selectively modify behavior while keeping the rest. Continue training if you want to undo everything.
+| Reversal speed | Faster | Slower |
+| Backdoor removal | Strong | Weak |
 
 ## Setup
 
@@ -21,13 +22,13 @@
 
 ## Exp 1: Reversal Speed
 
-Train LoRA on Chinese (Phase 1), then revert to English (Phase 2). Compare: **(i)** merge + fresh LoRA vs **(ii)** continue same LoRA.
+Train LoRA on Chinese (Phase 1), then revert to English (Phase 2). Compare: **(i)** merge + fresh LoRA vs **(ii)** continue same LoRA. We record the number of training steps until 90% of the test responses revert to English.
 
 ### Rank Sweep (lr=2e-4)
 
 ![Rank sweep](results/exp1/rank_sweep/figures/rank_sweep.png)
 
-| Rank | Continue (ii) | Merge+New (i) | Speedup |
+| Rank | Continue | Merge+New | Speedup |
 |------|---------------|---------------|---------|
 | 4 | 9 steps | >20 (N/A) | >2.2x |
 | 8 | 7 | 14 | 2.0x |
@@ -38,19 +39,6 @@ Train LoRA on Chinese (Phase 1), then revert to English (Phase 2). Compare: **(i
 ![Phase 2 combined](results/exp1/rank_sweep/figures/phase2_combined.png)
 
 The advantage is largest at low ranks where the fresh LoRA lacks capacity to counteract merged weights. At rank 64, both converge immediately.
-
-### LR Sweep
-
-![lr=1e-4](results/exp1/lr_1e-4/figures/rank_sweep.png)
-![lr=5e-5](results/exp1/lr_5e-5/figures/rank_sweep.png)
-![lr=2e-5](results/exp1/lr_2e-5/figures/rank_sweep.png)
-
-| LR | Phase 1 works? | Continue-LoRA advantage |
-|----|----------------|------------------------|
-| 2e-4 | All ranks | 2x+ at rank 4-16 |
-| 1e-4 | All ranks | 2x at rank 4-8 |
-| 5e-5 | Rank 8+ | Moderate |
-| 2e-5 | Rank 16+ only | Small |
 
 ---
 
@@ -80,11 +68,7 @@ Three conditions: **(i)** merge + fresh LoRA, **(ii)** continue same LoRA, **(ii
 | 320 | 0.77 | 0.20 |
 | 640 | **0.86** | **0.09** |
 
-Merge+new preserves the backdoor (83-86%) because the trigger is baked into base weights. Continue LoRA erases it (down to 9-10%) — it can't distinguish the backdoor from the overall Chinese shift.
-
-With aggressive lr (3e-3), even merge+new loses the backdoor:
-
-![Exp2 high lr](results/exp2/r32_lr3e-3/figures/convergence.png)
+Merge+new preserves the backdoor (83-86%) while continuing LoRA erases it (down to 9-10%) — it can't distinguish the backdoor from the overall Chinese shift.
 
 ---
 
